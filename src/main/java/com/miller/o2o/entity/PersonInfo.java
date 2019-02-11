@@ -14,16 +14,35 @@ import java.util.Date;
 @Getter
 @Setter
 public class PersonInfo {
+
+    /**
+     * ID
+     */
     private Integer id;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 头像
+     */
     private String profileImg;
 
+    /**
+     * 邮箱
+     */
     private String email;
 
+    /**
+     * 性别
+     */
     private String gender;
 
+    /**
+     * 启用状态
+     */
     private Integer enableStatus;
 
     /**

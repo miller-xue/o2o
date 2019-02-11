@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by miller on 2019/2/2
+ * @author Miller
  */
 @Getter
 @Setter
@@ -14,8 +15,14 @@ public class LocalAuth {
 
     private Long id;
 
+    /**
+     * 用户名
+     */
     private String username;
 
+    /**
+     * 密码
+     */
     private String password;
 
     /**
@@ -28,6 +35,9 @@ public class LocalAuth {
      */
     private Date lastEditTime;
 
+    /**
+     * 授权关联的用户对象
+     */
     private PersonInfo personInfo;
 
 }

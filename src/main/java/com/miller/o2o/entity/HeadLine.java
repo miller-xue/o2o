@@ -13,21 +13,43 @@ import java.util.Date;
 @Setter
 public class HeadLine {
 
+    /**
+     * ID
+     */
     private Integer id;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 连接
+     */
     private String link;
 
+    /**
+     * 图片
+     */
     private String img;
 
+    /**
+     * 权重
+     */
     private Integer priority;
+
     /**
      *  0.不可用 1.可用
      */
     private Integer enableStatus;
 
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
+    /**
+     * 修改时间
+     */
     private Date laseEditTime;
 }

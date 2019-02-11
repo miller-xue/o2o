@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by miller on 2019/2/2
+ * @author Miller
  */
 @Getter
 @Setter
@@ -14,8 +15,14 @@ public class ProductCategory {
 
     private Long id;
 
+    /**
+     * 分类归属店铺id
+     */
     private Long shopId;
 
+    /**
+     * 分类Id
+     */
     private String name;
 
     /**

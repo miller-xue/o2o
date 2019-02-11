@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by miller on 2019/1/31
  * @author Miller
  *
- * 基本类型会产生默认是，引用类型为null
+ * 基本类型会产生默认值，引用类型为null
  */
 @Getter
 @Setter
