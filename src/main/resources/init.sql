@@ -2,6 +2,7 @@
 CREATE TABLE `tb_area` (
   `id`  int(2) NOT NULL AUTO_INCREMENT ,
   `name`  varchar(200) NOT NULL COMMENT '名称' ,
+  `desc`  varchar(1000)  DEFAULT  '' COMMENT '描述' ,
   `priority`  int(2) NOT NULL DEFAULT 0 ,
   `create_time`  datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间' ,
   `last_edit_time`  datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间' ,

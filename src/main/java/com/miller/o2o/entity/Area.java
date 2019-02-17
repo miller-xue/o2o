@@ -1,9 +1,9 @@
 package com.miller.o2o.entity;
 
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 
 /**
  * Created by miller on 2019/1/31
@@ -16,27 +16,27 @@ import java.util.Date;
 public class Area {
 
     /**
-     * ID
+     * ID。
      */
     private Integer id;
 
     /**
-     * 名称
+     * 名称。
      */
     private String name;
 
     /**
-     * 权重
+     * 权重。
      */
     private Integer priority;
 
     /**
-     * 创建时间
+     * 创建时间。
      */
     private Date createTime;
 
     /**
-     * 更新时间
+     * 更新时间。
      */
     private Date lastEditTime;
 }
