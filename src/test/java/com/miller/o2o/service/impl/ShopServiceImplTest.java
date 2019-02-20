@@ -10,6 +10,8 @@ import com.miller.o2o.service.ShopService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 /**
@@ -30,6 +32,6 @@ public class ShopServiceImplTest extends BaseTest {
                 .owner(PersonInfo.builder().id(1).build()).
                         shopCategory(ShopCategory.builder().id(1l).build()).build();
 
-        ShopExecution add = shopService.add(build, null);
+        ShopExecution add = shopService.add(build, new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\wallhaven-716116.jpg"));
     }
 }

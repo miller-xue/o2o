@@ -36,28 +36,35 @@ public class ShopServiceImpl implements ShopService {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }
         try {
-            if (shopImg != null) {
-                // 2.储存图片
-                try {
-                    addShopImg(shop, shopImg);
-                } catch (Exception e) {
-                    throw new ShopOperationException("addShopImg error:" + e.getMessage());
-                }
-            }
-            // 3.补充数据
+            // 2.初始值补充
             shop.setEnableStatus(ShopStateEnum.CHECK.getState());
+            // 3.添加店铺信息
             int effectedNum = shopDao.insert(shop);
             if (effectedNum <= 0) {
                 throw new ShopOperationException("店铺创建失败");
+            }else {
+                if (shopImg != null) {
+                    // 4.储存图片
+                    try {
+                        addShopImg(shop, shopImg);
+                    } catch (Exception e) {
+                        throw new ShopOperationException("addShopImg error:" + e.getMessage());
+                    }
+                    // 5.更新店铺图片地址
+                    effectedNum = shopDao.update(shop);
+                    if (effectedNum <= 0) {
+                        throw new ShopOperationException("更新图片地址失败");
+                    }
+                }
             }
         } catch (Exception e) {
-            throw new ShopOperationException("add error:" + e.getMessage());
+            throw new ShopOperationException("addShop error:" + e.getMessage());
         }
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
 
     private void addShopImg(Shop shop, File shopImg) throws IOException {
-        // 获取shop图片目录的相对值路径
+        //获取shop图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getId());
         String shopImgAddr = ImageUtil.generateThumbnail(shopImg, dest);
         shop.setImg(shopImgAddr);

@@ -17,16 +17,16 @@
     <update id="update" parameterType="com.miller.o2o.entity.Shop">
         update tb_shop
         <set>
-            <if test="name != null"> name = #{name}, </if>
-            <if test="desc != null"> desc = #{desc}, </if>
-            <if test="addr != null"> addr = #{addr}, </if>
-            <if test="phone != null"> phone = #{phone}, </if>
-            <if test="img != null"> img = #{img}, </if>
-            <if test="priority != null"> priority = #{priority}, </if>
-            <if test="enableStatus != null"> enable_status = #{enableStatus}, </if>
-            <if test="advice != null"> advice = #{advice}, </if>
-            <if test="area != null"> area_id = #{area.id}, </if>
-            <if test="shopCategory != null"> shop_category_id = #{shopCategory.id}, </if>
+            <if test="name != null"> `name` = #{name}, </if>
+            <if test="desc != null"> `desc` = #{desc}, </if>
+            <if test="addr != null"> `addr` = #{addr}, </if>
+            <if test="phone != null"> `phone` = #{phone}, </if>
+            <if test="img != null"> `img` = #{img}, </if>
+            <if test="priority != null"> `priority` = #{priority}, </if>
+            <if test="enableStatus != null"> `enable_status` = #{enableStatus}, </if>
+            <if test="advice != null"> `advice` = #{advice}, </if>
+            <if test="area != null"> `area_id` = #{area.id}, </if>
+            <if test="shopCategory != null"> `shop_category_id` = #{shopCategory.id}, </if>
         </set>
         where id = #{id}
     </update>
