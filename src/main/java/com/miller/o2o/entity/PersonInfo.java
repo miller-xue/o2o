@@ -1,7 +1,6 @@
 package com.miller.o2o.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,8 +10,12 @@ import java.util.Date;
  * @author Miller
  */
 
+
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class PersonInfo {
 
     /**

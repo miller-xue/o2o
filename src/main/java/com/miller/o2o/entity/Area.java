@@ -1,8 +1,8 @@
 package com.miller.o2o.entity;
 
 import java.util.Date;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 
 /**
@@ -13,6 +13,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class Area {
 
     /**
