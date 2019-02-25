@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by miller on 2019/2/17
@@ -30,7 +30,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public ShopExecution add(Shop shop, File shopImg) {
+    public ShopExecution add(Shop shop, InputStream shopImgInputStream, String shopImgFileName) {
         // 1.参数校验
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
@@ -43,10 +43,10 @@ public class ShopServiceImpl implements ShopService {
             if (effectedNum <= 0) {
                 throw new ShopOperationException("店铺创建失败");
             }else {
-                if (shopImg != null) {
+                if (shopImgInputStream != null) {
                     // 4.储存图片
                     try {
-                        addShopImg(shop, shopImg);
+                        addShopImg(shop, shopImgInputStream, shopImgFileName);
                     } catch (Exception e) {
                         throw new ShopOperationException("addShopImg error:" + e.getMessage());
                     }
@@ -63,10 +63,10 @@ public class ShopServiceImpl implements ShopService {
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
 
-    private void addShopImg(Shop shop, File shopImg) throws IOException {
+    private void addShopImg(Shop shop, InputStream shopImgInputStream,String shopImgFileName) throws IOException {
         //获取shop图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getId());
-        String shopImgAddr = ImageUtil.generateThumbnail(shopImg, dest);
+        String shopImgAddr = ImageUtil.generateThumbnail(shopImgInputStream,shopImgFileName, dest);
         shop.setImg(shopImgAddr);
 
     }

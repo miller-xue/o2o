@@ -6,6 +6,7 @@ import net.coobird.thumbnailator.geometry.Positions;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -27,11 +28,11 @@ public class ImageUtil {
 
 
 
-    public static String generateThumbnail(File file, String targetAddr) throws IOException {
+    public static String generateThumbnail(InputStream inputStream, String imgFileName, String targetAddr) throws IOException {
         // 1.获取新文件名
         String realFileName = getRandomFileName();
         // 2.获取后缀名
-        String extension = getFileExtension(file.getName());
+        String extension = getFileExtension(imgFileName);
         // 3.如果文件夹不存在，创建所有文件夹
         makeDirPath(targetAddr);
         // 4.实际存储路径
@@ -39,7 +40,7 @@ public class ImageUtil {
 
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
         try {
-            Thumbnails.of(file).size(200, 200)
+            Thumbnails.of(inputStream).size(200, 200)
                     .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
                     .outputQuality(0.8f).toFile(dest);
         } catch (IOException e) {
@@ -68,7 +69,7 @@ public class ImageUtil {
      * @param file Spring上传文件对象
      * @return 文件扩展名
      */
-    private static String getFileExtension(File file) {
+    public static String getFileExtension(File file) {
         String originalFileName = file.getName();
         return originalFileName.substring(originalFileName.lastIndexOf("."));
     }
@@ -78,7 +79,7 @@ public class ImageUtil {
      * @param fileName 原文件名
      * @return 扩展名
      */
-    private static String getFileExtension(String fileName) {
+    public static String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
@@ -86,7 +87,7 @@ public class ImageUtil {
      * 获取一个文件随即名
      * @return 文件随即名
      */
-    private static String getRandomFileName() {
+    public static String getRandomFileName() {
         // 获取随机的五位数
         int rannum = random.nextInt(89999) + 10000;
         String nowTimeStr = format.format(new Date());

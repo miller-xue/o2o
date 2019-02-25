@@ -2,6 +2,7 @@ package com.miller.o2o.exceptions;
 
 /**
  * Created by miller on 2019/2/17
+ * 店铺操作异常
  *
  * @author Miller
  */

@@ -1,6 +1,6 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
-
+catalina.base_IS_UNDEFINED
 ### STS ###
 .apt_generated
 .classpath
