@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miller.o2o.dto.ShopExecution;
+import com.miller.o2o.entity.PersonInfo;
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.entity.ShopCategory;
 import com.miller.o2o.enums.ShopStateEnum;
 import com.miller.o2o.service.AreaService;
 import com.miller.o2o.service.ShopCategoryService;
 import com.miller.o2o.service.ShopService;
+import com.miller.o2o.util.CodeUtil;
 import com.miller.o2o.util.HttpServletRequestUtil;
 import com.miller.o2o.util.ImageUtil;
 import com.miller.o2o.util.PathUtil;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -65,18 +68,23 @@ public class ShopManagementController {
 
     @RequestMapping(value = "/registershop", method = RequestMethod.POST)
     @ResponseBody
-    private Map<String, Object> registerShop(HttpServletRequest request, Shop shop, MultipartFile file) {
-
+    //TODO 代码重构
+    public Map<String, Object> registerShop(HttpServletRequest request,@RequestParam("shopImg") MultipartFile file) {
         Map<String, Object> modelMap = new HashMap<>(2);
+        if (!CodeUtil.checkVerifyCode(request)) {
+             modelMap.put("success", false);
+            modelMap.put("errMsg", "输入了错误的验证码");
+            return modelMap;
+        }
         //1.接收并转换相应的参照，包括店铺信息和图片信息
         String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
         ObjectMapper mapper = new ObjectMapper();
-        Shop s = null;
+        Shop shop = null;
         try {
             shop = mapper.readValue(shopStr, Shop.class);
         } catch (Exception e) {
             modelMap.put("success", false);
-            modelMap.put("errMsg", e.toString());
+            modelMap.put("errMsg", e.getMessage());
             return modelMap;
         }
         //TODO 上传重构
@@ -94,7 +102,8 @@ public class ShopManagementController {
         //2.注册店铺
         if (shop != null && shopImg != null) {
             // TODO 设置管理员（在线登陆用户）
-
+            PersonInfo build = PersonInfo.builder().id(1).build();
+            shop.setOwner(build);
             ShopExecution se = null;
             try {
                 se = shopService.add(shop, shopImg.getInputStream(),shopImg.getOriginalFilename());
