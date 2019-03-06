@@ -4,6 +4,33 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miller.o2o.dao.ShopDao">
 
+    <resultMap id="shopMap" type="com.miller.o2o.entity.Shop">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="desc" property="desc"/>
+        <result column="addr" property="addr"/>
+        <result column="phone" property="phone"/>
+        <result column="img" property="img"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_edit_time" property="lastEditTime"/>
+        <result column="enable_status" property="enableStatus"/>
+        <result column="advice" property="advice"/>
+        <association property="area" column="area_id" javaType="com.miller.o2o.entity.Area">
+            <id column="area_id" property="id"/>
+            <result column="area_name" property="name"/>
+        </association>
+        <association property="shopCategory" column="shop_category_id" javaType="com.miller.o2o.entity.ShopCategory">
+            <id column="shop_category_id" property="id"/>
+            <result column="shop_category_name" property="name"/>
+        </association>
+        <association property="owner" column="owner_id" javaType="com.miller.o2o.entity.PersonInfo">
+            <id column="owner_id" property="id"/>
+            <result column="owner_name" property="name"/>
+        </association>
+    </resultMap>
+
+
     <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
             parameterType="com.miller.o2o.entity.Shop">
         insert into
@@ -30,6 +57,30 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="queryById" parameterType="long" resultMap="shopMap">
+        select
+            s.id,
+            s.`name`,
+            s.`desc`,
+            s.`addr`,
+            s.`phone`,
+            s.`img`,
+            s.priority,
+            s.create_time,
+            s.last_edit_time,
+            s.enable_status,
+            s.advice,
+            s.area_id,
+            s.owner_id,
+            s.shop_category_id,
+            a.name as area_name,
+            sc.name as shop_category_name
+        from tb_shop s
+        left join tb_area a on s.area_id = a.id
+        left join tb_shop_category sc on s.shop_category_id = sc.id
+        where s.id = #{id}
+    </select>
 
 
 </mapper>

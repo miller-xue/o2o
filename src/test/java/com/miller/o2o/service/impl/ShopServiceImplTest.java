@@ -10,6 +10,7 @@ import com.miller.o2o.enums.ShopStateEnum;
 import com.miller.o2o.service.ShopService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,5 +38,14 @@ public class ShopServiceImplTest extends BaseTest {
 
         ShopExecution add = shopService.add(build, new FileInputStream(new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\wallhaven-716116.jpg")), "test.jpg");
         assertEquals(ShopStateEnum.CHECK.getState(), add.getState());
+    }
+
+    @Test
+    @Transactional
+    public void modifyShop() throws FileNotFoundException {
+        Shop shop = Shop.builder().name("修改后店铺名字").id(4l).build();
+        File file = new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\gamersky_01origin_01_20174152144B91.jpg");
+        ShopExecution shopExecution = shopService.modifyShop(shop, new FileInputStream(file), "gamersky_01origin_01_20174152144B91.jpg");
+        assertEquals(ShopStateEnum.CHECK.getState(), shopExecution.getState());
     }
 }

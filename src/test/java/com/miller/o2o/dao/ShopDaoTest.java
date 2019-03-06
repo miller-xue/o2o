@@ -39,10 +39,18 @@ public class ShopDaoTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void update() {
         Shop build = Shop.builder().id(4l).name("2").build();
         int update = shopDao.update(build);
         assertEquals(1, update);
 
+    }
+
+    @Test
+    public void queryById() {
+        long id = 4;
+        Shop shop = shopDao.queryById(id);
+        assertEquals("2",shop.getName());
     }
 }

@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DynamicDataSourceHolder {
 
-    private static ThreadLocal<String> contextHolder = new ThreadLocal<>();
+    private static ThreadLocal<String> CONTEXT_HOLDER = new ThreadLocal<>();
 
     public static final String DB_MASTER = "master";
 
@@ -21,7 +21,7 @@ public class DynamicDataSourceHolder {
      * @return
      */
     public static Object getDbType() {
-        String db = contextHolder.get();
+        String db = CONTEXT_HOLDER.get();
         if (db == null) {
             db = DB_MASTER;
         }
@@ -34,13 +34,13 @@ public class DynamicDataSourceHolder {
      */
     public static void setDbType(String string) {
         log.debug("所使用的数据源为：" + string);
-        contextHolder.set(string);
+        CONTEXT_HOLDER.set(string);
     }
 
     /**
      * 清理连接类型
      */
     public static void clearDbType() {
-        contextHolder.remove();
+        CONTEXT_HOLDER.remove();
     }
 }
