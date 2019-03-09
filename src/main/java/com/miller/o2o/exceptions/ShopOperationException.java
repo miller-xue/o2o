@@ -6,7 +6,7 @@ package com.miller.o2o.exceptions;
  *
  * @author Miller
  */
-public class ShopOperationException extends RuntimeException {
+public class ShopOperationException extends BusinessException {
 
     private static final long serialVersionUID = 4190095821813362780L;
 

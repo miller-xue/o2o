@@ -2,6 +2,7 @@ package com.miller.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miller.o2o.dto.AjaxResult;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Area;
 import com.miller.o2o.entity.PersonInfo;
@@ -32,7 +33,7 @@ import java.util.Map;
 
 /**
  * Created by miller on 2019/2/24
- *
+ * 引入了全局异常处理器
  * @author Miller
  */
 @Controller
@@ -53,43 +54,32 @@ public class ShopManagementController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/shop/{shopId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/shop/{shopId}", method = RequestMethod.GET)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Map<String, Object> getShopById(@PathVariable Long shopId) {
-        Map<String, Object> modelMap = new HashMap<>(3);
+    public AjaxResult getShopById(@PathVariable Long shopId) {
+        AjaxResult result;
         if (shopId != null && shopId > -1) {
-            try {
-                Shop shop = shopService.getById(shopId);
-                List<Area> areaList = areaService.getList();
-                modelMap.put("shop", shop);
-                modelMap.put("areaList", areaList);
-                modelMap.put("success", true);
-            } catch (Exception e) {
-                modelMap.put("success", false);
-                modelMap.put("errMsg", e.getMessage());
-            }
-        }else {
-            modelMap.put("success", false);
-            modelMap.put("errMsg", "empty shopId");
+            Shop shop = shopService.getById(shopId);
+            List<Area> areaList = areaService.getList();
+            result = AjaxResult.success()
+                    .put("shop", shop)
+                    .put("areaList", areaList);
+        } else {
+            result = AjaxResult.error("empty shopId");
         }
-        return modelMap;
+        return result;
     }
 
 
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> getShopInitInfo() {
-        Map<String, Object> modelMap = new HashMap<>(3);
-        try {
-            modelMap.put("shopCategoryList", shopCategoryService.getList(new ShopCategory()));
-            modelMap.put("areaList", areaService.getList());
-            modelMap.put("success", true);
-        } catch (Exception e) {
-            modelMap.put("success", false);
-            modelMap.put("errMsg", e.getMessage());
-        }
-        return modelMap;
+    public AjaxResult getShopInitInfo() {
+        return AjaxResult.success()
+                .put("shopCategoryList", shopCategoryService.getList(new ShopCategory()))
+                .put("areaList", areaService.getList());
     }
+
+
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
@@ -97,7 +87,7 @@ public class ShopManagementController {
     public Map<String, Object> registerShop(@RequestParam("shopImg") MultipartFile file) {
         Map<String, Object> modelMap = new HashMap<>(2);
         if (!CodeUtil.checkVerifyCode(request)) {
-             modelMap.put("success", false);
+            modelMap.put("success", false);
             modelMap.put("errMsg", "输入了错误的验证码");
             return modelMap;
         }
@@ -118,7 +108,7 @@ public class ShopManagementController {
         if (commonsMultipartResolver.isMultipart(request)) {
             MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
             shopImg = (CommonsMultipartFile) multipartHttpServletRequest.getFile("shopImg");
-        }else {
+        } else {
             modelMap.put("success", false);
             modelMap.put("errMsg", "上传图片不能为空");
             return modelMap;
@@ -131,11 +121,11 @@ public class ShopManagementController {
             shop.setOwner(owner);
             ShopExecution se = null;
             try {
-                se = shopService.add(shop, shopImg.getInputStream(),shopImg.getOriginalFilename());
+                se = shopService.add(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
             } catch (IOException e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", se.getStateInfo());
-            }//TODO catch 后下一步执行的代码
+            }
             if (se.getState() == ShopStateEnum.CHECK.getState()) {
                 modelMap.put("success", true);
                 // 把能管理的店铺放在session中
@@ -145,58 +135,53 @@ public class ShopManagementController {
                 }
                 shopList.add(se.getShop());
                 request.getSession().setAttribute("shopList", shopList);
-            }else {
+            } else {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", se.getStateInfo());
             }
             //3.返回结果
             return modelMap;
-        }else {
+        } else {
             modelMap.put("success", false);
             modelMap.put("errMsg", "请输入店铺信息");
             return modelMap;
         }
     }
 
-    //TODO
+    public AjaxResult register(Shop shop, MultipartFile file) {
+        return null;
+    }
+
+    /**
+     * 修改店铺
+     * @param shop
+     * @param file
+     * @return
+     */
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> modify(Shop shop, MultipartFile file) {
-        Map<String, Object> modelMap = new HashMap<>(2);
+    public AjaxResult modify(Shop shop, MultipartFile file) throws IOException {
+
         // 验证码校验
         if (!CodeUtil.checkVerifyCode(request)) {
-            modelMap.put("success", false);
-            modelMap.put("errMsg", "输入了错误的验证码");
-            return modelMap;
+            return AjaxResult.error("输入了错误的验证码");
         }
-        try {
-            // 仓库修改
-            if (shop != null && shop.getId() != null) {
-                InputStream in = null;
-                String imgName = null;
-                if (file != null && file.getSize() > 0) {
-                    try {
-                        in = file.getInputStream();
-                        imgName = file.getOriginalFilename();
-                    } catch (IOException e) {
-                        modelMap.put("success", false);
-                        modelMap.put("errMsg", e.getMessage());
-                        return modelMap;
-                    }
-                }
-                ShopExecution se = shopService.modifyShop(shop, in, imgName);
-                if (se.getState() == ShopStateEnum.CHECK.getState()) {
-                    modelMap.put("success", true);
-                } else {
-                    modelMap.put("success", false);
-                    modelMap.put("errMsg", se.getStateInfo());
-                }
+        // 仓库修改
+        if (shop != null && shop.getId() != null) {
+            InputStream in = null;
+            String imgName = null;
+            if (file != null && file.getSize() > 0) {
+                in = file.getInputStream();
+                imgName = file.getOriginalFilename();
             }
-        } catch (Exception e) {
-            modelMap.put("success", false);
-            modelMap.put("errMsg", e.getMessage());
+            ShopExecution se = shopService.modifyShop(shop, in, imgName);
+            if (se.getState() == ShopStateEnum.CHECK.getState()) {
+                return AjaxResult.success();
+            } else {
+                return AjaxResult.error(se.getStateInfo());
+            }
         }
-        return modelMap;
+        return AjaxResult.error("empty shopId");
     }
 
 //    private static void inputStreamToFile(InputStream ins, File file) {
