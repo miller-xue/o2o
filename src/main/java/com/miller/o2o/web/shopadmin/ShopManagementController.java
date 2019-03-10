@@ -13,23 +13,16 @@ import com.miller.o2o.service.AreaService;
 import com.miller.o2o.service.ShopCategoryService;
 import com.miller.o2o.service.ShopService;
 import com.miller.o2o.util.CodeUtil;
-import com.miller.o2o.util.HttpServletRequestUtil;
-import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by miller on 2019/2/24
@@ -49,9 +42,6 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
-    @Autowired
-    private HttpServletRequest request;
-
 
     @ResponseBody
     @RequestMapping(value = "/shop/{shopId}", method = RequestMethod.GET)
@@ -60,10 +50,14 @@ public class ShopManagementController {
         AjaxResult result;
         if (shopId != null && shopId > -1) {
             Shop shop = shopService.getById(shopId);
-            List<Area> areaList = areaService.getList();
-            result = AjaxResult.success()
-                    .put("shop", shop)
-                    .put("areaList", areaList);
+            if (shop == null) {
+                result = AjaxResult.error("empty shopId");
+            }else {
+                List<Area> areaList = areaService.getList();
+                result = AjaxResult.success()
+                        .put("shop", shop)
+                        .put("areaList", areaList);
+            }
         } else {
             result = AjaxResult.error("empty shopId");
         }
@@ -71,7 +65,7 @@ public class ShopManagementController {
     }
 
 
-    @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/getShopInit", method = RequestMethod.GET)
     @ResponseBody
     public AjaxResult getShopInitInfo() {
         return AjaxResult.success()
@@ -81,10 +75,9 @@ public class ShopManagementController {
 
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    //TODO 代码重构
-    public Map<String, Object> registerShop(@RequestParam("shopImg") MultipartFile file) {
+    public Map<String, Object> registerShop(@RequestParam("shopImgFile") MultipartFile shopImgFile) {
         Map<String, Object> modelMap = new HashMap<>(2);
         if (!CodeUtil.checkVerifyCode(request)) {
             modelMap.put("success", false);
@@ -102,12 +95,11 @@ public class ShopManagementController {
             modelMap.put("errMsg", e.getMessage());
             return modelMap;
         }
-        //TODO 上传重构
-        CommonsMultipartFile shopImg = null;
+        CommonsMultipartFile shopImgFile = null;
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         if (commonsMultipartResolver.isMultipart(request)) {
             MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-            shopImg = (CommonsMultipartFile) multipartHttpServletRequest.getFile("shopImg");
+            shopImgFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile("shopImgFile");
         } else {
             modelMap.put("success", false);
             modelMap.put("errMsg", "上传图片不能为空");
@@ -115,16 +107,15 @@ public class ShopManagementController {
         }
 
         //2.注册店铺
-        if (shop != null && shopImg != null) {
-            // TODO 设置管理员（在线登陆用户）
+        if (shop != null && shopImgFile != null) {
             PersonInfo owner = (PersonInfo) request.getSession().getAttribute("user");
             shop.setOwner(owner);
             ShopExecution se = null;
             try {
-                se = shopService.add(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                se = shopService.add(shop, shopImgFile.getInputStream(), shopImgFile.getOriginalFilename());
             } catch (IOException e) {
                 modelMap.put("success", false);
-                modelMap.put("errMsg", se.getStateInfo());
+                modelMap.put("errMsg", e.getMessage());
             }
             if (se.getState() == ShopStateEnum.CHECK.getState()) {
                 modelMap.put("success", true);
@@ -146,33 +137,64 @@ public class ShopManagementController {
             modelMap.put("errMsg", "请输入店铺信息");
             return modelMap;
         }
-    }
+    }*/
 
-    public AjaxResult register(Shop shop, MultipartFile file) {
-        return null;
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public AjaxResult register(@RequestParam("shop") String shopJson, MultipartFile shopImgFile, HttpServletRequest request) throws IOException {
+        // 参数校验
+        if (!CodeUtil.checkVerifyCode(request)) {
+            return AjaxResult.error("输入了错误的验证码");
+        }
+        if (shopImgFile == null || shopImgFile.isEmpty()) {
+            return AjaxResult.error("上传图片不能为空");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Shop shop = mapper.readValue(shopJson, Shop.class);
+        if (shop == null) {
+            return AjaxResult.error("请输入店铺信息");
+        }
+        // 参数补充
+        // TODO 设置管理员（在线登陆用户）
+        shop.setOwner((PersonInfo) request.getSession().getAttribute("user"));
+        ShopExecution se = shopService.add(shop, shopImgFile.getInputStream(), shopImgFile.getOriginalFilename());
+        if (se.getState() != ShopStateEnum.CHECK.getState()) {
+            return AjaxResult.error(se.getStateInfo());
+        }
+        // 把能管理的店铺放在session中
+        List<Shop> shopList = (List<Shop>) request.getSession().getAttribute("shopList");
+        if (shopList == null) {
+            shopList = new ArrayList<>();
+        }
+        shopList.add(se.getShop());
+        request.getSession().setAttribute("shopList", shopList);
+        return AjaxResult.success();
     }
 
     /**
      * 修改店铺
-     * @param shop
-     * @param file
+     *
+     * @param shopJson
+     * @param shopImgFile
      * @return
      */
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResult modify(Shop shop, MultipartFile file) throws IOException {
-
+    public AjaxResult modify(@RequestParam("shop") String shopJson, MultipartFile shopImgFile, HttpServletRequest request) throws IOException {
         // 验证码校验
         if (!CodeUtil.checkVerifyCode(request)) {
             return AjaxResult.error("输入了错误的验证码");
         }
         // 仓库修改
+        ObjectMapper mapper = new ObjectMapper();
+        Shop shop = mapper.readValue(shopJson, Shop.class);
+
         if (shop != null && shop.getId() != null) {
             InputStream in = null;
             String imgName = null;
-            if (file != null && file.getSize() > 0) {
-                in = file.getInputStream();
-                imgName = file.getOriginalFilename();
+            if (shopImgFile != null && shopImgFile.getSize() > 0) {
+                in = shopImgFile.getInputStream();
+                imgName = shopImgFile.getOriginalFilename();
             }
             ShopExecution se = shopService.modifyShop(shop, in, imgName);
             if (se.getState() == ShopStateEnum.CHECK.getState()) {
@@ -184,10 +206,10 @@ public class ShopManagementController {
         return AjaxResult.error("empty shopId");
     }
 
-//    private static void inputStreamToFile(InputStream ins, File file) {
+//    private static void inputStreamToFile(InputStream ins, File shopImgFile) {
 //        FileOutputStream os = null;
 //        try {
-//            os = new FileOutputStream(file);
+//            os = new FileOutputStream(shopImgFile);
 //            int bytesRead = 0;
 //            byte[] buffer = new byte[1024];
 //            while ((bytesRead = ins.read(buffer)) != -1) {

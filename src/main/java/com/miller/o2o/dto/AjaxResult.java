@@ -27,6 +27,13 @@ public class AjaxResult extends HashMap<String, Object> {
         return json;
     }
 
+    public static AjaxResult error(Exception e) {
+        AjaxResult json = new AjaxResult();
+        json.put("success", false);
+        json.put("msg", e.getMessage());
+        return json;
+    }
+
 
 
     /**

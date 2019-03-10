@@ -82,5 +82,73 @@
         where s.id = #{id}
     </select>
 
+    <select id="queryList" parameterType="map" resultMap="shopMap">
+        select
+            s.id,
+            s.`name`,
+            s.`desc`,
+            s.`addr`,
+            s.`phone`,
+            s.`img`,
+            s.priority,
+            s.create_time,
+            s.last_edit_time,
+            s.enable_status,
+            s.advice,
+            s.area_id,
+            s.owner_id,
+            s.shop_category_id,
+            a.name as area_name,
+            sc.name as shop_category_name
+        from tb_shop s
+        left join tb_area a on s.area_id = a.id
+        left join tb_shop_category sc on s.shop_category_id = sc.id
+        <where>
+            <if test="shopCondition.shopCategory != null and shopCondition.shopCategory.id != null">
+                and s.shop_category_id = #{shopCondition.shopCategory.id}
+            </if>
+            <if test="shopCondition.area != null and shopCondition.area.id != null">
+                and s.area_id = #{shopCondition.area.id}
+            </if>
+            <if test="shopCondition.name != null">
+                and s.name like '%${shopCondition.name}%'
+            </if>
+            <if test="shopCondition.enableStatus != null">
+                and s.enable_status = #{shopCondition.enableStatus}
+            </if>
+            <if test="shopCondition.owner != null and shopCondition.owner.id != null">
+                and s.owner_id = #{shopCondition.owner.id}
+            </if>
+        </where>
+        ORDER BY
+        s.priority desc
+        limit #{rowIndex},#{pageSize}
+    </select>
+    
+    <select id="queryListCount" resultType="int">
+        select
+            count(1)
+        from tb_shop s
+        left join tb_area a on s.area_id = a.id
+        left join tb_shop_category sc on s.shop_category_id = sc.id
+        <where>
+            <if test="shopCondition.shopCategory != null and shopCondition.shopCategory.id != null">
+                and s.shop_category_id = #{shopCondition.shopCategory.id}
+            </if>
+            <if test="shopCondition.area != null and shopCondition.area.id != null">
+                and s.area_id = #{shopCondition.area.id}
+            </if>
+            <if test="shopCondition.name != null">
+                and s.name like '%${shopCondition.name}%'
+            </if>
+            <if test="shopCondition.enableStatus != null">
+                and s.enable_status = #{shopCondition.enableStatus}
+            </if>
+            <if test="shopCondition.owner != null and shopCondition.owner.id != null">
+                and s.owner_id = #{shopCondition.owner.id}
+            </if>
+        </where>
+        limit #{rowIndex},#{pageSize}
+    </select>
 
 </mapper>
