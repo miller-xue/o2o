@@ -122,9 +122,10 @@
         </where>
         ORDER BY
         s.priority desc
-        limit #{rowIndex},#{pageSize}
+        <!--limit #{rowIndex},#{pageSize}-->
     </select>
     
+<!--
     <select id="queryListCount" resultType="int">
         select
             count(1)
@@ -150,5 +151,6 @@
         </where>
         limit #{rowIndex},#{pageSize}
     </select>
+-->
 
 </mapper>

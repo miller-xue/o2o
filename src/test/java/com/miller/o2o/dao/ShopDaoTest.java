@@ -1,5 +1,7 @@
 package com.miller.o2o.dao;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.miller.o2o.BaseTest;
 import com.miller.o2o.entity.Area;
 import com.miller.o2o.entity.PersonInfo;
@@ -9,6 +11,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -52,5 +56,13 @@ public class ShopDaoTest extends BaseTest {
         long id = 4;
         Shop shop = shopDao.queryById(id);
         assertEquals("2",shop.getName());
+    }
+
+    @Test
+    public void queryList() {
+        PageHelper.startPage(1, 10);
+        List<Shop> shopList = shopDao.queryList(new Shop());
+        PageInfo pageInfo = new PageInfo(shopList);
+        System.out.println(pageInfo.toString());
     }
 }

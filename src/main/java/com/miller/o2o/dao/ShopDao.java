@@ -23,12 +23,12 @@ public interface ShopDao {
      *
      * TODO 加上分页功能
      */
-    List<Shop> queryList(@Param("shopCondition") Shop shopCondition,
-                         @Param("rowIndex") int rowIndex,
-                         @Param("pageSize") int pageSize);
+    List<Shop> queryList(@Param("shopCondition") Shop shopCondition);
 
-    int queryListCount(@Param("shopCondition") Shop shopCondition,
-                       @Param("rowIndex") int rowIndex,
-                       @Param("pageSize") int pageSize);
+//    int queryListCount(@Param("shopCondition") Shop shopCondition,
+//                       @Param("rowIndex") int rowIndex,
+//                       @Param("pageSize") int pageSize);
+
+
 
 }
