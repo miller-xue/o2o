@@ -1,5 +1,7 @@
 package com.miller.o2o.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.miller.o2o.dao.ShopDao;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Shop;
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Created by miller on 2019/2/17
@@ -29,6 +31,17 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     private ShopDao shopDao;
+
+    @Override
+    public ShopExecution getShopList(Shop shopCondition, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Shop> shopList = shopDao.queryListByPage(shopCondition);
+        if (shopList != null) {
+            PageInfo<Shop> pageInfo = PageInfo.of(shopList);
+            return ShopExecution.builder().count(pageInfo.getTotal()).shopList(pageInfo.getList()).build();
+        }
+        return ShopExecution.builder().state(ShopStateEnum.INNER_ERROR.getState()).build();
+    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)

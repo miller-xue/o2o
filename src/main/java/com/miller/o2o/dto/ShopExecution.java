@@ -2,9 +2,7 @@ package com.miller.o2o.dto;
 
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ShopStateEnum;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,6 +14,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ShopExecution {
     /**
      * 结果状态
@@ -30,7 +30,7 @@ public class ShopExecution {
     /**
      * 店铺数量
      */
-    private int count;
+    private long count;
 
     /**
      * 操作的shop(增删改查用到)

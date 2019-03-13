@@ -82,7 +82,7 @@
         where s.id = #{id}
     </select>
 
-    <select id="queryList" parameterType="map" resultMap="shopMap">
+    <select id="queryListByPage" parameterType="map" resultMap="shopMap">
         select
             s.id,
             s.`name`,

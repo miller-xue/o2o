@@ -14,6 +14,15 @@ import java.io.InputStream;
 public interface ShopService {
 
     /**
+     * 根据shopCondition分页返回相应店铺列表
+     * @param shopCondition 条件
+     * @param pageNum 起始页
+     * @param pageSize 查几条
+     * @return
+     */
+    ShopExecution getShopList(Shop shopCondition, int pageNum, int pageSize);
+
+    /**
      * 注册店铺信息，包括图片处理
      *
      * @param shop
@@ -34,6 +43,7 @@ public interface ShopService {
 
     /**
      * 更新店铺信息，包括对图片的处理
+     *
      * @param shop
      * @param shopImgInputStream
      * @param fileName

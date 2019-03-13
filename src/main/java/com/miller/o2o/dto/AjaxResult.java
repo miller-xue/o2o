@@ -14,6 +14,13 @@ public class AjaxResult extends HashMap<String, Object> {
     public AjaxResult() {
     }
 
+
+    public static AjaxResult redirect(boolean redirect) {
+        AjaxResult json = new AjaxResult();
+        json.put("redirect", redirect);
+        return json;
+    }
+
     /**
      * 返回失败消息
      *
@@ -24,6 +31,16 @@ public class AjaxResult extends HashMap<String, Object> {
         AjaxResult json = new AjaxResult();
         json.put("success", false);
         json.put("msg", msg);
+        return json;
+    }
+
+    /**
+     * 返回失败
+     * @return
+     */
+    public static AjaxResult error() {
+        AjaxResult json = new AjaxResult();
+        json.put("success", false);
         return json;
     }
 

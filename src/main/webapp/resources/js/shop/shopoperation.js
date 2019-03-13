@@ -2,10 +2,10 @@ $(function () {
     var shopId = getQueryString('shopId');
     var isEdit = shopId ? true : false;
 
-    var initUrl = '/shop/admin/getShopInit';
-    var registerShopUrl = '/shop/admin/register';
-    var shopInfoUrl = '/shop/admin/shop/'+ shopId;
-    var editShopUrl = '/shop/admin/modify';
+    var initUrl = '/admin/shop/getShopInit';
+    var registerShopUrl = '/admin/shop/register';
+    var shopInfoUrl = '/admin/shop/'+ shopId;
+    var editShopUrl = '/admin/shop/modify';
 
 
     if (!isEdit) {
