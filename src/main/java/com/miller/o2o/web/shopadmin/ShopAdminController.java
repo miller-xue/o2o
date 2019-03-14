@@ -43,10 +43,13 @@ public class ShopAdminController {
     @Autowired
     private AreaService areaService;
 
-
+    /**
+     * 查询一个店铺
+     * @param shopId 店铺顶下
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/{shopId}", method = RequestMethod.GET)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public AjaxResult getShopById(@PathVariable Long shopId) {
         AjaxResult result;
         if (shopId != null && shopId > -1) {
@@ -65,7 +68,10 @@ public class ShopAdminController {
         return result;
     }
 
-
+    /**
+     * 查询店铺列表
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public AjaxResult getShopList() {
@@ -75,6 +81,11 @@ public class ShopAdminController {
         return AjaxResult.success().put("shopList", se.getShopList()).put("user", currentUser);
     }
 
+    /**
+     * 没看懂是个啥方法。。
+     * @param shopId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getShopManagementInfo",method = RequestMethod.GET)
     public AjaxResult getShopManagementInfo(Long shopId) {
@@ -93,7 +104,10 @@ public class ShopAdminController {
     }
 
 
-
+    /**
+     * 注册店铺初始化参数
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getShopInit", method = RequestMethod.GET)
     public AjaxResult getShopInitInfo() {
@@ -168,9 +182,17 @@ public class ShopAdminController {
         }
     }*/
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    /**
+     * 注册
+     * @param shopJson 店铺对象Json字符串
+     * @param shopImgFile 图片
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
-    public AjaxResult register(@RequestParam("shop") String shopJson, MultipartFile shopImgFile, HttpServletRequest request) throws IOException {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public AjaxResult register(@RequestParam("shop") String shopJson, MultipartFile shopImgFile) throws IOException {
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
         // 参数校验
         if (!CodeUtil.checkVerifyCode(request)) {
             return AjaxResult.error("输入了错误的验证码");

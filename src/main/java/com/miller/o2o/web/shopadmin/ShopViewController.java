@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ShopViewController {
     String prefix = "shop/";
 
-    @RequestMapping(path = "/shopOperation")
-    public String shopOperation() {
-        return prefix + "shopOperation";
+    @RequestMapping(path = "/operation")
+    public String operation() {
+        return prefix + "operation";
     }
 
-    @RequestMapping(path = "/shopList")
-    public String shopList() {
-        return prefix + "shopList";
+    @RequestMapping(path = "/list")
+    public String list() {
+        return prefix + "list";
     }
 
-    @RequestMapping(path = "/shopManagement")
-    public String shopManagement() {
-        return prefix + "shopManage";
+    @RequestMapping(path = "/manage")
+    public String manage() {
+        return prefix + "manage";
     }
 
 }
