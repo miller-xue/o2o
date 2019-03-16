@@ -1,5 +1,6 @@
 package com.miller.o2o.enums;
 
+import com.miller.o2o.common.BaseState;
 import lombok.Getter;
 
 /**
@@ -8,7 +9,7 @@ import lombok.Getter;
  * @author Miller
  */
 @Getter
-public enum ShopStateEnum {
+public enum ShopStateEnum implements BaseState {
 
     CHECK(0, "审核中"),
     OFF_LINE(-1, "非法店铺"),
@@ -27,14 +28,5 @@ public enum ShopStateEnum {
     ShopStateEnum(int state, String stateInfo) {
         this.state = state;
         this.stateInfo = stateInfo;
-    }
-
-    public static ShopStateEnum stateOf(int state) {
-        for (ShopStateEnum stateEnum : values()) {
-            if (stateEnum.state == state) {
-                return stateEnum;
-            }
-        }
-        return null;
     }
 }

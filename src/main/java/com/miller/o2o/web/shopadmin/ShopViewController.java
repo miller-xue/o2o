@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/shopAdmin",method = RequestMethod.GET)
 public class ShopViewController {
+
     String prefix = "shop/";
 
     @RequestMapping(path = "/operation")
@@ -28,5 +29,13 @@ public class ShopViewController {
     public String manage() {
         return prefix + "manage";
     }
+
+
+    @RequestMapping(path = "/productCategory/list")
+    public String productCategoryList() {
+        return prefix + "/productCategory/list";
+    }
+
+
 
 }

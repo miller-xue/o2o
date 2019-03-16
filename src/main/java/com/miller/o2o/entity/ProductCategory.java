@@ -1,7 +1,6 @@
 package com.miller.o2o.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,6 +10,9 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProductCategory {
 
     private Long id;

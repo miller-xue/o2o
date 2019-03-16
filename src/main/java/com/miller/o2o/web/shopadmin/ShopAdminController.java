@@ -1,8 +1,7 @@
 package com.miller.o2o.web.shopadmin;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.miller.o2o.dto.AjaxResult;
+import com.miller.o2o.common.AjaxResult;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Area;
 import com.miller.o2o.entity.PersonInfo;

@@ -1,4 +1,4 @@
-package com.miller.o2o.dto;
+package com.miller.o2o.common;
 
 import java.util.HashMap;
 
@@ -14,10 +14,42 @@ public class AjaxResult extends HashMap<String, Object> {
     public AjaxResult() {
     }
 
+    /**
+     * 添加一个状态
+     * @param state 状态
+     * @return
+     */
+    public AjaxResult state(BaseState state) {
+        return state(state.getState(), state.getStateInfo());
+    }
 
+    /**
+     * 添加一个状态信息，
+     * @param state 状态码
+     * @param stateInfo 状态信息
+     * @return
+     */
+    public AjaxResult state(int state, String stateInfo) {
+        this.put("state", state);
+        this.put("stateInfo", stateInfo);
+        return this;
+    }
+
+    /**
+     * 返回重定向信息
+     * @param redirect 是否重定向
+     * @return
+     */
     public static AjaxResult redirect(boolean redirect) {
         AjaxResult json = new AjaxResult();
         json.put("redirect", redirect);
+        return json;
+    }
+
+    public static AjaxResult redirect(boolean redirect,String url) {
+        AjaxResult json = new AjaxResult();
+        json.put("redirect", redirect);
+        json.put("url", url);
         return json;
     }
 
@@ -91,4 +123,7 @@ public class AjaxResult extends HashMap<String, Object> {
         super.put(key, value);
         return this;
     }
+
+
+
 }
