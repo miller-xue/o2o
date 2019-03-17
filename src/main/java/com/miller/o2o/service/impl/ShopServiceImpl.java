@@ -7,7 +7,9 @@ import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ShopStateEnum;
 import com.miller.o2o.exceptions.ShopOperationException;
+import com.miller.o2o.service.PersonInfoService;
 import com.miller.o2o.service.ShopService;
+import com.miller.o2o.util.HttpContextUtils;
 import com.miller.o2o.util.ImageUtil;
 import com.miller.o2o.util.PathUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +34,12 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
 
+    @Autowired
+    private PersonInfoService personInfoService;
+
     @Override
     public ShopExecution getShopList(Shop shopCondition, int pageNum, int pageSize) {
+        // TODO 数据权限在Controller层控制
         PageHelper.startPage(pageNum, pageSize);
         List<Shop> shopList = shopDao.queryListByPage(shopCondition);
         if (shopList != null) {
@@ -80,7 +86,11 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public Shop getById(long id) {
-        return shopDao.queryById(id);
+        Long ownerId = null;
+        if (!personInfoService.isAdmin()) {
+            ownerId = HttpContextUtils.getCurrentUser().getId();
+        }
+        return shopDao.queryById(id, ownerId);
     }
 
     @Override
@@ -88,10 +98,24 @@ public class ShopServiceImpl implements ShopService {
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }
+        Shop beforeShop = getById(shop.getId());
+        if (beforeShop == null) {
+            return new ShopExecution(ShopStateEnum.NULL_SHOP);
+        }
+        // 非管理员，进行校验
+        if (!personInfoService.isAdmin()) {
+            if (!beforeShop.getOwner().getId().equals(HttpContextUtils.getCurrentUser().getId())) {
+                // 数据越权,非本店铺管理员修改
+//                throw new ShopOperationException("数据越权！");
+                log.error("数据越权，越权人：{}", HttpContextUtils.getCurrentUser());
+            }else {
+                shop.setOwner(beforeShop.getOwner());
+            }
+        }
         try {
             // 1.判断是否需要修改图片
             if (shopImgInputStream != null && StringUtils.isNotBlank(fileName)) {
-                Shop beforeShop = shopDao.queryById(shop.getId());
+
                 try {
                     addShopImg(shop, shopImgInputStream, fileName);
                     if (StringUtils.isNotBlank(beforeShop.getImg())) {

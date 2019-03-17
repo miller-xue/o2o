@@ -56,6 +56,9 @@
             <if test="shopCategory != null"> `shop_category_id` = #{shopCategory.id}, </if>
         </set>
         where id = #{id}
+        <if test="shop.owner!= null and shop.owner.id != null">
+            and owner_id = #{owner.id}
+        </if>
     </update>
 
     <select id="queryById" parameterType="long" resultMap="shopMap">
@@ -80,6 +83,9 @@
         left join tb_area a on s.area_id = a.id
         left join tb_shop_category sc on s.shop_category_id = sc.id
         where s.id = #{id}
+        <if test="ownerId != null">
+            and owner_id = #{ownerId}
+        </if>
     </select>
 
     <select id="queryListByPage" parameterType="map" resultMap="shopMap">

@@ -1,6 +1,6 @@
 $(function () {
     let listUrl = '/shop/admin/product/category/list?shopId=4';
-    let addUrl = '/shop/admin/product/category/add';
+    let addUrl = '/shop/admin/product/category/batchAdd';
     let deleteUrl = '/shop/admin/product/category/remove';
     let categoryListTemplate = $("#categoryListTemplate").html();
     let categoryAddTemplate = $("#categoryAddTemplate").html();
@@ -27,4 +27,41 @@ $(function () {
     $("#new").click(function () {
         $('.category-wrap').append(categoryAddTemplate);
     })
+
+    $("#submit").click(function (e) {
+        let tempArr = $(".temp");
+        if (tempArr.length == 0) {
+            $.toast('请先新增！');
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        }
+        let productCategoryList = tempArr.map(function (index,item) {
+            let name = $(item).find('.category').val();
+            let priority = $(item).find('.priority').val();
+            if (name && priority) {
+                return {name: name, priority: priority}
+            }
+        });
+        if (productCategoryList.length == 0) {
+            $.toast('请输入数据！');
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        }
+        $.ajax({
+            url: addUrl,
+            type: 'POST',
+            data: JSON.stringify(productCategoryList),
+            contentType:'application/json',
+            success: function (data) {
+                if (data.success) {
+                    $.toast('提交成功！');
+                    getList();
+                }else {
+                    $.toast('提交失败！');
+                }
+            }
+        });
+    });
 });

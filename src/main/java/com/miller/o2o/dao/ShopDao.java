@@ -16,7 +16,7 @@ public interface ShopDao {
 
     int update(Shop shop);
 
-    Shop queryById(long id);
+    Shop queryById(@Param("id") long id, @Param("ownerId") Long ownerId);
 
     /**
      * 分页查询店铺，可输入的条件有：店铺名(模糊)，店铺类别，区域Id,owner

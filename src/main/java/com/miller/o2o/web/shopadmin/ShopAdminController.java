@@ -74,9 +74,9 @@ public class ShopAdminController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public AjaxResult getShopList() {
-        // TODO
+        // TODO 列表需要 当前用户id
         PersonInfo currentUser = HttpContextUtils.getCurrentUser();
-        ShopExecution se = shopService.getShopList(Shop.builder().owner(PersonInfo.builder().id(1).build()).build(), 1, 100);
+        ShopExecution se = shopService.getShopList(Shop.builder().owner(PersonInfo.builder().id(1L).build()).build(), 1, 100);
         return AjaxResult.success().put("shopList", se.getShopList()).put("user", currentUser);
     }
 
@@ -88,18 +88,36 @@ public class ShopAdminController {
     @ResponseBody
     @RequestMapping(value = "/getShopManagementInfo",method = RequestMethod.GET)
     public AjaxResult getShopManagementInfo(Long shopId) {
+        Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
+
         if (shopId == null || shopId <= 0) {
-            Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
             if (currentShop == null) {
                 return AjaxResult.redirect(true).put("url", "/shopAdmin/shopList");
-            }else {
-                return AjaxResult.redirect(false).put("shopId", currentShop.getId());
             }
+            return AjaxResult.redirect(false).put("shopId", currentShop.getId());
         }else {
-            Shop shop = Shop.builder().id(shopId).build();
-            HttpContextUtils.getHttpSession().setAttribute("currentShop", shop);
-            return AjaxResult.redirect(false);
+            // 判断当前登陆人是否有传入商铺id权限，
+            Shop byId = shopService.getById(shopId);
+            if (byId != null) {
+                HttpContextUtils.getHttpSession().setAttribute("currentShop", byId);
+                return AjaxResult.redirect(false);
+            }else {
+                return AjaxResult.redirect(true).put("url", "/shopAdmin/shopList");
+            }
         }
+
+//        if (shopId == null || shopId <= 0) {
+//            Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
+//            if (currentShop == null) {
+//                return AjaxResult.redirect(true).put("url", "/shopAdmin/shopList");
+//            }else {
+//                return AjaxResult.redirect(false).put("shopId", currentShop.getId());
+//            }
+//        }else {
+//            Shop shop = Shop.builder().id(shopId).build();
+//            HttpContextUtils.getHttpSession().setAttribute("currentShop", shop);
+//            return AjaxResult.redirect(false);
+//        }
     }
 
 
@@ -182,7 +200,7 @@ public class ShopAdminController {
     }*/
 
     /**
-     * 注册
+     * 注册店铺
      * @param shopJson 店铺对象Json字符串
      * @param shopImgFile 图片
      * @return
@@ -212,12 +230,12 @@ public class ShopAdminController {
             return AjaxResult.error(se.getStateInfo());
         }
         // 把能管理的店铺放在session中
-        List<Shop> shopList = (List<Shop>) request.getSession().getAttribute("shopList");
-        if (shopList == null) {
-            shopList = new ArrayList<>();
-        }
-        shopList.add(se.getShop());
-        request.getSession().setAttribute("shopList", shopList);
+//        List<Shop> shopList = (List<Shop>) request.getSession().getAttribute("shopList");
+//        if (shopList == null) {
+//            shopList = new ArrayList<>();
+//        }
+//        shopList.add(se.getShop());
+//        request.getSession().setAttribute("shopList", shopList);
         return AjaxResult.success();
     }
 

@@ -21,7 +21,7 @@ public class PersonInfo {
     /**
      * ID
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 名称

@@ -33,7 +33,7 @@ public class ShopDaoTest extends BaseTest {
         Shop build = Shop.builder().name("小吃城").desc("我的小吃城").addr("南沣村").phone("13022996276").img("").
                 priority(10).enableStatus(1).advice("无").
                 area(Area.builder().id(1).build())
-                .owner(PersonInfo.builder().id(1).build()).
+                .owner(PersonInfo.builder().id(1L).build()).
                 shopCategory(ShopCategory.builder().id(1l).build()).build();
 
         int insert = shopDao.insert(build);
@@ -53,7 +53,7 @@ public class ShopDaoTest extends BaseTest {
     @Test
     public void queryById() {
         long id = 4;
-        Shop shop = shopDao.queryById(id);
+        Shop shop = shopDao.queryById(id, null);
         assertEquals("2",shop.getName());
     }
 
@@ -61,7 +61,7 @@ public class ShopDaoTest extends BaseTest {
     public void queryList() {
         PageHelper.startPage(0, 5);
         List<Shop> shopList = shopDao.queryListByPage(Shop.builder()
-                .owner(PersonInfo.builder().id(1).build())
+                .owner(PersonInfo.builder().id(1L).build())
                 .area(Area.builder().id(2).build())
                 .build());
         PageInfo pageInfo = PageInfo.of(shopList);

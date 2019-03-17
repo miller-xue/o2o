@@ -40,13 +40,13 @@
                        class="button button-big button-fill button-success" id="new">新增</a>
                 </div>
                 <div class="col-50">
-                    <a href="#"
-                       class="button button-big button-fill " >提交</a>
+                    <a href="#" id="submit" class="button button-big button-fill " >提交</a>
                 </div>
             </div>
         </div>
     </div>
-<script id="categoryListTemplate" type="x-tmpl-mustache">
+
+    <script id="categoryListTemplate" type="x-tmpl-mustache">
     {{#categoryList}}
     <div class="row row-product-category now">
         <div class="col-33 product-category-name">{{name}}</div>
@@ -56,14 +56,14 @@
     {{/categoryList}}
 </script>
 <script id="categoryAddTemplate" type="x-tmpl-mustache">
-    <div className="row row-product-category temp">
-        <div className="col-33">
+    <div class="row row-product-category temp">
+        <div class="col-33">
             <input class="category-input category" type="text" placeholder="分类名"/>
         </div>
-        <div className="col-33">
+        <div class="col-33">
             <input class="category-input priority" type="number" placeholder="优先级"/>
         </div>
-        <div className="col-33"><a href="#" className="button delete" >删除</a></div>
+        <div class="col-33"><a href="#" class="button delete" >删除</a></div>
     </div>
 </script>
 <!-- cdn 获取 -->
