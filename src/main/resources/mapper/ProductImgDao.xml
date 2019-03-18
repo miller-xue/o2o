@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miller.o2o.dao.ProductImgDao">
+    <insert id="batchInsert" parameterType="list">
+        insert into tb_product_img
+        (`product_id`,`addr`,`desc`,`priority`)
+        values
+        <foreach collection="list" item="img" separator=",">
+            (#{img.productId},#{img.addr},#{img.desc},#{img.priority})
+        </foreach>
+    </insert>
+
+    <select id="selectList" parameterType="long" resultType="com.miller.o2o.entity.ProductImg">
+        select
+            `id`,
+            `product_id`,
+            `addr`,
+            `desc`,
+            `priority`,
+            `create_time`
+        from tb_product_img where product_id = #{productId}
+    </select>
+
+    <delete id="deleteByProductId" parameterType="long">
+        delete from tb_product_img where product_id = #{productId}
+    </delete>
+</mapper>
