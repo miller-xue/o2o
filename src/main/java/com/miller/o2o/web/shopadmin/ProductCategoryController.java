@@ -28,7 +28,6 @@ public class ProductCategoryController {
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public AjaxResult list() {
-        // 对shopId进行操作...
         Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
         if (currentShop == null || currentShop.getId() <= 0) {
             return AjaxResult.error().state(ProductCategoryStateEnum.INNER_ERROR);
@@ -39,6 +38,13 @@ public class ProductCategoryController {
     @ResponseBody
     @RequestMapping(value = "/batchAdd", method = RequestMethod.POST)
     public AjaxResult batchAdd(@RequestBody List<ProductCategory> productCategoryList) {
+        Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
+        if (currentShop == null || currentShop.getId() <= 0) {
+            return AjaxResult.error().state(ProductCategoryStateEnum.INNER_ERROR);
+        }
+
+        // 填充数据
+        productCategoryList.stream().forEach((ProductCategory p) -> p.setShopId(currentShop.getId()));
         ProductCategoryExecution execution = productCategoryService.batchAdd(productCategoryList);
         if (execution.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
             return AjaxResult.success();

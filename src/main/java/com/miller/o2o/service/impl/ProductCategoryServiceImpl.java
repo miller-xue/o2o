@@ -34,8 +34,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (CollectionUtils.isEmpty(list)) {
             return new ProductCategoryExecution(ProductCategoryStateEnum.EMPTY_LIST);
         }
-        //TODO 动态填充shopId
-        list.stream().forEach((ProductCategory p) -> p.setShopId(4L));
         int effectedNum = productCategoryDao.batchInsert(list);
         if (effectedNum <= 0) {
             throw new ProductCategoryOperationException("店铺类别创建失败");
