@@ -23,6 +23,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Autowired
     private ProductCategoryDao productCategoryDao;
 
+
     @Override
     public List<ProductCategory> getList(long shopId) {
         return productCategoryDao.selectList(shopId);
@@ -33,9 +34,24 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (CollectionUtils.isEmpty(list)) {
             return new ProductCategoryExecution(ProductCategoryStateEnum.EMPTY_LIST);
         }
+        //TODO 动态填充shopId
+        list.stream().forEach((ProductCategory p) -> p.setShopId(4L));
         int effectedNum = productCategoryDao.batchInsert(list);
         if (effectedNum <= 0) {
             throw new ProductCategoryOperationException("店铺类别创建失败");
+        }
+        return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
+    }
+
+
+    @Override
+    public ProductCategoryExecution delete(long id, long shopId) {
+
+        //TODO 将此类别下的商品里的类别id置为空，在删除该商品类别
+
+        int effectedNum = productCategoryDao.delete(id, shopId);
+        if (effectedNum <= 0) {
+            throw new ProductCategoryOperationException("删除失败");
         }
         return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
     }

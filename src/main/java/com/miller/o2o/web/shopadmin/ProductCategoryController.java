@@ -27,14 +27,13 @@ public class ProductCategoryController {
 
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public AjaxResult list(Long shopId) {
+    public AjaxResult list() {
         // 对shopId进行操作...
         Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
-        //TODO
-        if (shopId == null || shopId <= 0) {
+        if (currentShop == null || currentShop.getId() <= 0) {
             return AjaxResult.error().state(ProductCategoryStateEnum.INNER_ERROR);
         }
-        return AjaxResult.success().put("list", productCategoryService.getList(shopId));
+        return AjaxResult.success().put("list", productCategoryService.getList(currentShop.getId()));
     }
 
     @ResponseBody
@@ -50,11 +49,12 @@ public class ProductCategoryController {
     @ResponseBody
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.GET)
     public AjaxResult delete(@PathVariable("id") Long id){
-        // TODO
+        Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
         if (id == null || id <= 0) {
-            return AjaxResult.error().state(ProductCategoryStateEnum.INNER_ERROR);
+            return AjaxResult.error("请至少选中一个商品类别");
         }
-        ProductCategoryExecution se = productCategoryService.delete(id);
+
+        ProductCategoryExecution se = productCategoryService.delete(id, currentShop.getId());
         if (se.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
             return AjaxResult.success();
         }

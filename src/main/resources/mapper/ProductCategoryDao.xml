@@ -13,7 +13,7 @@
 			create_time
 		from tb_product_category
 		where shop_id = #{shopId}
-		order by priority,create_time desc
+		order by priority  desc
 	</select>
 
 	 <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
@@ -46,4 +46,8 @@
 		</set>
 		where id = #{id} and shop_id #{shopId}
 	</update>
+
+	<delete id="delete" parameterType="map">
+		delete from tb_product_category where id = #{id} and shop_id = #{shopId}
+	</delete>
 </mapper>

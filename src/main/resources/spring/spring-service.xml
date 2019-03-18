@@ -10,7 +10,9 @@
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx.xsd">
     <!-- 扫描service包下所有使用注解的类型 -->
-    <context:component-scan base-package="com.miller.o2o.service" />
+    <context:component-scan base-package="com.miller.o2o" >
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
     <!-- 配置事务管理器 -->
     <bean id="transactionManager"

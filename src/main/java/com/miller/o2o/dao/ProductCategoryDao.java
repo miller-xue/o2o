@@ -1,6 +1,7 @@
 package com.miller.o2o.dao;
 
 import com.miller.o2o.entity.ProductCategory;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface ProductCategoryDao {
     int update(ProductCategory productCategory);
 
     int batchInsert(List<ProductCategory> list);
+
+    int delete(@Param("id") long id,@Param("shopId") long shopId);
 }

@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.sql.SQLException;
 
 /**
  * Created by miller on 2019/3/9
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  *
  * @author Miller
  */
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
@@ -53,6 +56,18 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public AjaxResult businessException(BusinessException e)
+    {
+        log.error(e.getMessage(), e);
+        return AjaxResult.error(e.getMessage());
+    }
+
+    /**
+     * 数据库异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(SQLException.class)
+    public AjaxResult sqlException(BusinessException e)
     {
         log.error(e.getMessage(), e);
         return AjaxResult.error(e.getMessage());

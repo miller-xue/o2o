@@ -2,6 +2,7 @@ package com.miller.o2o.dao;
 
 import com.miller.o2o.BaseTest;
 import com.miller.o2o.entity.ProductCategory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,5 +35,12 @@ public class ProductCategoryDaoTest extends BaseTest {
         }
         int i = categoryDao.batchInsert(list);
         assertTrue(i > 0);
+    }
+
+    @Test
+    @Ignore
+    public void delete() {
+        int delete = categoryDao.delete(4, 4);
+        assertEquals(1, delete);
     }
 }

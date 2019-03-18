@@ -1,7 +1,7 @@
 $(function () {
     let listUrl = '/shop/admin/product/category/list?shopId=4';
     let addUrl = '/shop/admin/product/category/batchAdd';
-    let deleteUrl = '/shop/admin/product/category/remove';
+    let deleteUrl = '/shop/admin/product/category/delete';
     let categoryListTemplate = $("#categoryListTemplate").html();
     let categoryAddTemplate = $("#categoryAddTemplate").html();
     getList();
@@ -62,6 +62,29 @@ $(function () {
                     $.toast('提交失败！');
                 }
             }
+        });
+    });
+
+    $('.category-wrap').on('click', '.row-product-category.temp .delete', function (e) {
+        $(this).parent().parent().remove();
+    });
+
+    $('.category-wrap').on('click', '.row-product-category.now .delete', function (e) {
+        var target = e.currentTarget;
+        $.confirm('确定么？', function () {
+            $.ajax({
+                url: deleteUrl + '/' + target.dataset.id,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        $.toast('删除成功!');
+                        getList();
+                    }else{
+                        $.toast('删除失败！');
+                    }
+                }
+            });
         });
     });
 });

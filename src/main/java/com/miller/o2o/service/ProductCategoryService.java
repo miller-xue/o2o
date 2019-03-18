@@ -15,4 +15,12 @@ public interface ProductCategoryService {
     List<ProductCategory> getList(long shopId);
 
     ProductCategoryExecution batchAdd(List<ProductCategory> list);
+
+    /**
+     * 将此类别下的商品里的类别id置为空，在删除该商品类别
+     * @param id
+     * @param shopId
+     * @return
+     */
+    ProductCategoryExecution delete(long id,long shopId);
 }
