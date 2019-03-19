@@ -1,6 +1,7 @@
 package com.miller.o2o.service.impl;
 
 import com.miller.o2o.BaseTest;
+import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Area;
 import com.miller.o2o.entity.PersonInfo;
@@ -38,7 +39,7 @@ public class ShopServiceImplTest extends BaseTest {
                 .owner(PersonInfo.builder().id(1L).build()).
                         shopCategory(ShopCategory.builder().id(1l).build()).build();
 
-        ShopExecution add = shopService.add(build, new FileInputStream(new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\wallhaven-716116.jpg")), "test.jpg");
+        ShopExecution add = shopService.add(build, new ImageHolder("test.jpg", new FileInputStream(new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\wallhaven-716116.jpg"))));
         assertEquals(ShopStateEnum.CHECK.getState(), add.getState());
     }
 
@@ -48,7 +49,7 @@ public class ShopServiceImplTest extends BaseTest {
     public void modifyShop() throws FileNotFoundException {
         Shop shop = Shop.builder().name("修改后店铺名字").id(4l).build();
         File file = new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\gamersky_01origin_01_20174152144B91.jpg");
-        ShopExecution shopExecution = shopService.modifyShop(shop, new FileInputStream(file), "gamersky_01origin_01_20174152144B91.jpg");
+        ShopExecution shopExecution = shopService.modifyShop(shop, new ImageHolder("test.jpg", new FileInputStream(new File("C:\\Users\\Miller\\Desktop\\2k壁纸\\wallhaven-716116.jpg"))));
         assertEquals(ShopStateEnum.CHECK.getState(), shopExecution.getState());
     }
 

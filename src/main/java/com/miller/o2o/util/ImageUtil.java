@@ -1,5 +1,6 @@
 package com.miller.o2o.util;
 
+import com.miller.o2o.dto.ImageHolder;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 
@@ -28,11 +29,11 @@ public class ImageUtil {
 
 
 
-    public static String generateThumbnail(InputStream inputStream, String imgFileName, String targetAddr) throws IOException {
+    public static String generateThumbnail(ImageHolder imageHolder, String targetAddr) throws IOException {
         // 1.获取新文件名
         String realFileName = getRandomFileName();
         // 2.获取后缀名
-        String extension = getFileExtension(imgFileName);
+        String extension = getFileExtension(imageHolder.getImageName());
         // 3.如果文件夹不存在，创建所有文件夹
         makeDirPath(targetAddr);
         // 4.实际存储路径
@@ -40,9 +41,31 @@ public class ImageUtil {
 
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
         try {
-            Thumbnails.of(inputStream).size(200, 200)
+            Thumbnails.of(imageHolder.getImage()).size(200, 200)
                     .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
                     .outputQuality(0.8f).toFile(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return relativeAddr;
+    }
+
+    public static String generateNormalImg(ImageHolder imageHolder, String targetAddr) throws IOException {
+        // 1.获取新文件名
+        String realFileName = getRandomFileName();
+        // 2.获取后缀名
+        String extension = getFileExtension(imageHolder.getImageName());
+        // 3.如果文件夹不存在，创建所有文件夹
+        makeDirPath(targetAddr);
+        // 4.实际存储路径
+        String relativeAddr = targetAddr + realFileName + extension;
+
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
+        try {
+            Thumbnails.of(imageHolder.getImage()).size(337, 640)
+                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
+                    .outputQuality(0.9f).toFile(dest);
         } catch (IOException e) {
             e.printStackTrace();
             throw e;
@@ -64,15 +87,7 @@ public class ImageUtil {
         }
     }
 
-    /**
-     * 获取输入文件扩展名
-     * @param file Spring上传文件对象
-     * @return 文件扩展名
-     */
-    public static String getFileExtension(File file) {
-        String originalFileName = file.getName();
-        return originalFileName.substring(originalFileName.lastIndexOf("."));
-    }
+
 
     /**
      * 获取输入文件扩展名
@@ -114,4 +129,5 @@ public class ImageUtil {
             fileOrPath.deleteOnExit();
         }
     }
+
 }

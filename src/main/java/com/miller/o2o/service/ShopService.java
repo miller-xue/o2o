@@ -1,5 +1,6 @@
 package com.miller.o2o.service;
 
+import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Shop;
 
@@ -26,11 +27,10 @@ public interface ShopService {
      * 注册店铺信息，包括图片处理
      *
      * @param shop
-     * @param shopImgInputStream
-     * @param fileName
+     * @param imageHolder
      * @return
      */
-    ShopExecution add(Shop shop, InputStream shopImgInputStream, String fileName);
+    ShopExecution add(Shop shop, ImageHolder imageHolder);
 
     /**
      * 通过店铺id获取店铺信息
@@ -45,9 +45,8 @@ public interface ShopService {
      * 更新店铺信息，包括对图片的处理
      *
      * @param shop
-     * @param shopImgInputStream
-     * @param fileName
+     * @param imageHolder
      * @return
      */
-    ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName);
+    ShopExecution modifyShop(Shop shop, ImageHolder imageHolder);
 }

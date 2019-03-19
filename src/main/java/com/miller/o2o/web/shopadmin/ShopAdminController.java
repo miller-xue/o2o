@@ -2,6 +2,7 @@ package com.miller.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miller.o2o.common.AjaxResult;
+import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Area;
 import com.miller.o2o.entity.PersonInfo;
@@ -225,7 +226,7 @@ public class ShopAdminController {
         // 参数补充
         // TODO 设置管理员（在线登陆用户）
         shop.setOwner((PersonInfo) request.getSession().getAttribute("user"));
-        ShopExecution se = shopService.add(shop, shopImgFile.getInputStream(), shopImgFile.getOriginalFilename());
+        ShopExecution se = shopService.add(shop, ImageHolder.builder().image(shopImgFile.getInputStream()).imageName(shopImgFile.getOriginalFilename()).build());
         if (se.getState() != ShopStateEnum.CHECK.getState()) {
             return AjaxResult.error(se.getStateInfo());
         }
@@ -264,7 +265,8 @@ public class ShopAdminController {
                 in = shopImgFile.getInputStream();
                 imgName = shopImgFile.getOriginalFilename();
             }
-            ShopExecution se = shopService.modifyShop(shop, in, imgName);
+            // TODO 应该把Multi part File 传入Service层
+            ShopExecution se = shopService.modifyShop(shop, ImageHolder.builder().image(in).imageName(imgName).build());
             if (se.getState() == ShopStateEnum.CHECK.getState()) {
                 return AjaxResult.success();
             } else {

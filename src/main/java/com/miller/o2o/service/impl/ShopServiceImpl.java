@@ -3,6 +3,7 @@ package com.miller.o2o.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.miller.o2o.dao.ShopDao;
+import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ShopExecution;
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ShopStateEnum;
@@ -51,7 +52,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public ShopExecution add(Shop shop, InputStream shopImgInputStream, String shopImgFileName) {
+    public ShopExecution add(Shop shop, ImageHolder imageHolder) {
         // 1.参数校验
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
@@ -64,10 +65,10 @@ public class ShopServiceImpl implements ShopService {
             if (effectedNum <= 0) {
                 throw new ShopOperationException("店铺创建失败");
             }else {
-                if (shopImgInputStream != null) {
+                if (imageHolder.getImage() != null) {
                     // 4.储存图片
                     try {
-                        addShopImg(shop, shopImgInputStream, shopImgFileName);
+                        addShopImg(shop,imageHolder);
                     } catch (Exception e) {
                         throw new ShopOperationException("addShopImg error:" + e.getMessage());
                     }
@@ -94,7 +95,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) {
+    public ShopExecution modifyShop(Shop shop, ImageHolder imageHolder) {
         if (shop == null) {
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
         }
@@ -114,10 +115,10 @@ public class ShopServiceImpl implements ShopService {
         }
         try {
             // 1.判断是否需要修改图片
-            if (shopImgInputStream != null && StringUtils.isNotBlank(fileName)) {
+            if (imageHolder.getImage() != null && StringUtils.isNotBlank(imageHolder.getImageName())) {
 
                 try {
-                    addShopImg(shop, shopImgInputStream, fileName);
+                    addShopImg(shop, imageHolder);
                     if (StringUtils.isNotBlank(beforeShop.getImg())) {
                         ImageUtil.deleteFileOrPath(beforeShop.getImg());
                     }
@@ -138,10 +139,10 @@ public class ShopServiceImpl implements ShopService {
 
 
 
-    private void addShopImg(Shop shop, InputStream shopImgInputStream,String shopImgFileName) throws IOException {
+    private void addShopImg(Shop shop, ImageHolder imageHolder) throws IOException {
         //获取shop图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getId());
-        String shopImgAddr = ImageUtil.generateThumbnail(shopImgInputStream,shopImgFileName, dest);
+        String shopImgAddr = ImageUtil.generateThumbnail(imageHolder, dest);
         shop.setImg(shopImgAddr);
 
     }

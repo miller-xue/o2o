@@ -12,6 +12,7 @@ import lombok.Getter;
 public enum ProductStateEnum implements BaseState {
     INNER_ERROR(-1001, "内部系统错误"),
     SUCCESS(1, "操作成功"),
+    EMPTY(2, "商品为空"),
     ;
     /**
      * 状态码
