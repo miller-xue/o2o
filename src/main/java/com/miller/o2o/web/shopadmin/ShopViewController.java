@@ -36,6 +36,10 @@ public class ShopViewController {
         return prefix + "/productCategory/list";
     }
 
+    @RequestMapping(path = "/product/operation")
+    public String productOperation() {
+        return prefix + "/product/operation";
+    }
 
 
 }

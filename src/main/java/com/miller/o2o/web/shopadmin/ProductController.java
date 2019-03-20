@@ -5,6 +5,7 @@ import com.miller.o2o.common.AjaxResult;
 import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ProductExecution;
 import com.miller.o2o.entity.Product;
+import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ShopStateEnum;
 import com.miller.o2o.service.ProductService;
 import com.miller.o2o.util.CodeUtil;
@@ -38,12 +39,15 @@ public class ProductController {
     private static final int IMAGE_MAX_COUNT = 6;
 
     @ResponseBody
-    @RequestMapping(value = "add",method = RequestMethod.POST)
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     public AjaxResult add(@RequestParam("product") String productJson,
-                          MultipartFile product,
+                          MultipartFile thumbnail,
                           List<MultipartFile> productImg) throws IOException {
         if (!CodeUtil.checkVerifyCode(HttpContextUtils.getHttpServletRequest())) {
             return AjaxResult.error("输入了错误的验证码");
+        }
+        if (thumbnail != null && thumbnail.isEmpty()) {
+            return AjaxResult.error("上传图片不能为空");
         }
         if (CollectionUtils.isNotEmpty(productImg) && productImg.size() > IMAGE_MAX_COUNT) {
             return AjaxResult.error("商品图片不能超过6张");
@@ -51,10 +55,11 @@ public class ProductController {
 
         ObjectMapper mapper = new ObjectMapper();
         Product p = mapper.readValue(productJson, Product.class);
-
         List<ImageHolder> collect = productImg.stream().map(ImageHolder::of).collect(Collectors.toList());
-
-        ProductExecution se = productService.add(p, ImageHolder.of(product), collect);
+        // 从session中获取当前操作的店铺id并赋值给product，减少对前端数据的依赖
+        Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
+        p.setShop(currentShop);
+        ProductExecution se = productService.add(p, ImageHolder.of(thumbnail), collect);
         if (se.getState() == ShopStateEnum.CHECK.getState()) {
             return AjaxResult.success();
         } else {
