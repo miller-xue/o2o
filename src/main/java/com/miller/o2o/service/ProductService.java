@@ -24,4 +24,7 @@ public interface ProductService {
      * @throws ProductOperationException
      */
     ProductExecution add(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList);
+
+    Product getById(long id);
+
 }

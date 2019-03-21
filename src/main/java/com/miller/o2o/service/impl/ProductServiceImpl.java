@@ -65,6 +65,12 @@ public class ProductServiceImpl implements ProductService {
         return new ProductExecution(ProductStateEnum.EMPTY);
     }
 
+    @Override
+    public Product getById(long id) {
+        //TODO
+        return null;
+    }
+
     private void addProductImgList(final Product product, List<ImageHolder> productImgList) {
         if (CollectionUtils.isEmpty(productImgList)) {
             return;

@@ -43,6 +43,7 @@ public class HttpServletRequestUtil {
 
     public static String getString(HttpServletRequest request, String key) {
         try {
+
             String result = request.getParameter(key);
             if (result != null) {
                 result = result.trim();

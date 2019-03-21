@@ -7,16 +7,14 @@ import com.miller.o2o.dto.ProductExecution;
 import com.miller.o2o.entity.Product;
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ShopStateEnum;
+import com.miller.o2o.service.ProductCategoryService;
 import com.miller.o2o.service.ProductService;
 import com.miller.o2o.util.CodeUtil;
 import com.miller.o2o.util.HttpContextUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -36,13 +34,36 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
+
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public AjaxResult get(@PathVariable("id") Long id) {
+        if (id == null || id <= 0) {
+            return AjaxResult.error("empty productId");
+        }
+        Product product = productService.getById(id);
+        if (product == null) {
+            return AjaxResult.error("empty productId");
+
+        }
+        Shop currentShop = (Shop) HttpContextUtils.getHttpSession().getAttribute("currentShop");
+        return AjaxResult.success().put("product", product)
+                .put("productCategoryList",productCategoryService.getList(currentShop.getId()));
+    }
+
+
     private static final int IMAGE_MAX_COUNT = 6;
 
     @ResponseBody
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public AjaxResult add(@RequestParam("product") String productJson,
+    public AjaxResult add(@RequestParam("productStr") String productJson,
                           MultipartFile thumbnail,
-                          List<MultipartFile> productImg) throws IOException {
+                          List<MultipartFile> productImg
+                          ) throws IOException {
+        String verifyCodeActual = HttpContextUtils.getHttpServletRequest().getParameter("");
         if (!CodeUtil.checkVerifyCode(HttpContextUtils.getHttpServletRequest())) {
             return AjaxResult.error("输入了错误的验证码");
         }
