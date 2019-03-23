@@ -3,6 +3,16 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miller.o2o.dao.ProductImgDao">
+
+    <resultMap id="ProductImgMap" type="com.miller.o2o.entity.ProductImg">
+        <id column="id" property="id"/>
+        <result column="addr" property="addr" />
+        <result column="desc" property="desc" />
+        <result column="priority" property="priority" />
+        <result column="create_time" property="createTime" />
+        <result column="product_id" property="productId" />
+    </resultMap>
+
     <insert id="batchInsert" parameterType="list">
         insert into tb_product_img
         (`product_id`,`addr`,`desc`,`priority`)

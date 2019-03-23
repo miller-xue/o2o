@@ -24,6 +24,7 @@ public class ImageHolder {
     private InputStream image;
 
     public static ImageHolder of(MultipartFile file) {
+        if (file == null){ return null;}
         try {
             return new ImageHolder(file.getOriginalFilename(), file.getInputStream());
         } catch (IOException e) {

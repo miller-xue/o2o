@@ -10,4 +10,8 @@ import com.miller.o2o.entity.Product;
 public interface ProductDao {
 
     int insert(Product product);
+
+    int update(Product product);
+
+    int selectById(long id);
 }

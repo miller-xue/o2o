@@ -54,8 +54,8 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
             // 创建商品信息
-            int effectenNum = productDao.insert(product);
-            if (effectenNum <= 0) {
+            int effectedNum = productDao.insert(product);
+            if (effectedNum <= 0) {
                 throw new ProductOperationException("创建商品失败");
             }
             // 商品详情图
@@ -71,6 +71,42 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public ProductExecution modify(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList) {
+        // 1.参数校验
+        Product before = getById(product.getId());
+        if (before == null) {
+            return new ProductExecution(ProductStateEnum.EMPTY);
+        }
+        // 2.判断是否修改缩略图
+        if (thumbnail != null) {
+            try {
+                addThumbnail(product, thumbnail);
+                // TODO 删除之前缩略图
+            } catch (IOException e) {
+                throw new ProductOperationException("添加缩略图失败" + e.getMessage());
+            }
+        }
+        // 3.修改商品信息
+        int effectedNum = productDao.update(product);
+        if (effectedNum <= 0) {
+            throw new ProductOperationException("修改商品失败");
+        }
+        // 4.判断是否修改了商品详情图
+        if (CollectionUtils.isNotEmpty(productImgList)) {
+            addProductImgList(product, productImgList);
+            // 删除之前的商品详情图
+            boolean flag = productImgService.deleteByProductId(product.getId());
+            if (!flag) {
+                // 删除之前商品详情成功
+                throw new ProductOperationException("修改商品详情图失败");
+            }
+        }
+        return new ProductExecution(ProductStateEnum.SUCCESS, product);
+    }
+
+
     private void addProductImgList(final Product product, List<ImageHolder> productImgList) {
         if (CollectionUtils.isEmpty(productImgList)) {
             return;
@@ -84,8 +120,8 @@ public class ProductServiceImpl implements ProductService {
                 throw new ProductOperationException("创建商品详情图失败");
             }
         }).collect(Collectors.toList());
-        int effectedNum = productImgService.batchAdd(productImgs);
-        if (effectedNum <= 0) {
+        boolean flag = productImgService.batchAdd(productImgs);
+        if (!flag) {
             throw new ProductOperationException("创建商品详情图失败");
         }
     }

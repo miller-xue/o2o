@@ -3,6 +3,26 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miller.o2o.dao.ProductDao">
+
+    <resultMap id="productMap" type="com.miller.o2o.entity.Product">
+        <id  column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="desc" property="desc"/>
+        <result column="img_addr" property="imgAddr"/>
+        <result column="normal_price" property="normalPrice"/>
+        <result column="promotion_price" property="promotionPrice"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_edit_time" property="lastEditTime"/>
+        <result column="enable_status" property="enableStatus"/>
+        <collection column="id" property="productImgList" resultMap="com.miller.o2o.dao.ProductImgDao.ProductImgMap">
+        </collection>
+    </resultMap>
+
+    <select id="selectById" resultMap="productMap" parameterType="long">
+
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.miller.o2o.entity.Product">
         insert into tb_product
             (`name`,`desc`,`img_addr`,`normal_price`,`promotion_price`,`priority`,`enable_status`
@@ -11,4 +31,8 @@
             (#{name},#{desc},#{imgAddr},#{normalPrice},#{promotionPrice},#{priority},#{enableStatus}
                 ,#{productCategory.id},#{shop.id})
     </insert>
+
+    <update id="update" parameterType="com.miller.o2o.entity.Product">
+
+    </update>
 </mapper>

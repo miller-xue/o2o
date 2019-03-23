@@ -87,13 +87,12 @@ $(function () {
         let formData = new FormData();
         formData.append('thumbnail', thumbnail);
         formData.append('productStr', JSON.stringify(product));
-        let productImgList = $('.detail-img').map(function (index, item) {
+
+        $('.detail-img').map(function (index, item) {
             if ($('.detail-img')[index].files.length > 0) {
-                return $('.detail-img')[index].files[0];
+                formData.append('productImg', $('.detail-img')[index].files[0]);
             }
         });
-        console.log(productImgList);
-        formData.append('productImg', productImgList);
         formData.append("verifyCodeActual", verifyCodeActual);
 
         $.ajax({

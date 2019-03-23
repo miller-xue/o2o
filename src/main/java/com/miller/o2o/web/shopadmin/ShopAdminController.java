@@ -202,15 +202,15 @@ public class ShopAdminController {
 
     /**
      * 注册店铺
-     * @param shopJson 店铺对象Json字符串
+     *
+     * @param shopJson    店铺对象Json字符串
      * @param shopImgFile 图片
      * @return
      * @throws IOException
      */
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public AjaxResult register(@RequestParam("shop") String shopJson, MultipartFile shopImgFile) throws IOException {
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+    public AjaxResult register(@RequestParam("shop") String shopJson, MultipartFile shopImgFile, HttpServletRequest request) throws IOException {
         // 参数校验
         if (!CodeUtil.checkVerifyCode(request)) {
             return AjaxResult.error("输入了错误的验证码");

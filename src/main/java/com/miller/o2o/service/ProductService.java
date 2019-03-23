@@ -27,4 +27,15 @@ public interface ProductService {
 
     Product getById(long id);
 
+    /**
+     * 修改商品信息以及图片处理
+     *
+     * @param product        商品对象
+     * @param thumbnail      缩略图
+     * @param productImgList 商品子图
+     * @return
+     * @throws ProductOperationException
+     */
+    ProductExecution modify(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList);
+
 }

@@ -22,7 +22,14 @@ public class ProductImgServiceImpl implements ProductImgService {
 
 
     @Override
-    public int batchAdd(List<ProductImg> imgList) {
-        return productImgDao.batchInsert(imgList);
+    public boolean batchAdd(List<ProductImg> imgList) {
+        return productImgDao.batchInsert(imgList) > 0;
+    }
+
+    @Override
+    public boolean deleteByProductId(long productId) {
+        // TODO 删除图片文件
+        // 删除数据库信息
+        return true;
     }
 }

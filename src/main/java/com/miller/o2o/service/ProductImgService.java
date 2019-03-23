@@ -10,5 +10,7 @@ import java.util.List;
  * @author Miller
  */
 public interface ProductImgService {
-    public int batchAdd(List<ProductImg> imgList);
+    boolean batchAdd(List<ProductImg> imgList);
+
+    boolean deleteByProductId(long productId);
 }
