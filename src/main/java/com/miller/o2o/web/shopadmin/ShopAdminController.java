@@ -45,32 +45,27 @@ public class ShopAdminController {
 
     /**
      * 查询一个店铺
-     * @param shopId 店铺顶下
+     *
+     * @param shopId 店铺ID
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/{shopId}", method = RequestMethod.GET)
     public AjaxResult getShopById(@PathVariable Long shopId) {
-        AjaxResult result;
-        if (shopId != null && shopId > -1) {
-            Shop shop = shopService.getById(shopId);
-            if (shop == null) {
-                result = AjaxResult.error("empty shopId");
-            }else {
-                List<Area> areaList = areaService.getList();
-                result = AjaxResult.success()
-                        .put("shop", shop)
-                        .put("areaList", areaList);
-            }
-        } else {
-            result = AjaxResult.error("empty shopId");
+        if (shopId == null || shopId <= 0) {
+            return AjaxResult.error("empty shopId");
         }
-        return result;
+        Shop shop = shopService.getById(shopId);
+        if (shop == null) {
+            return AjaxResult.error("empty shopId");
+        }
+        List<Area> areaList = areaService.getList();
+        return AjaxResult.success().put("shop", shop).put("areaList", areaList);
     }
 
     /**
      * 查询店铺列表
-     * @return
+     * @return 当前登陆用户下所有店铺列表
      */
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -257,23 +252,16 @@ public class ShopAdminController {
         // 仓库修改
         ObjectMapper mapper = new ObjectMapper();
         Shop shop = mapper.readValue(shopJson, Shop.class);
+        if (shop == null || shop.getId() == null) {
+            return AjaxResult.error("empty shopId");
 
-        if (shop != null && shop.getId() != null) {
-            InputStream in = null;
-            String imgName = null;
-            if (shopImgFile != null && shopImgFile.getSize() > 0) {
-                in = shopImgFile.getInputStream();
-                imgName = shopImgFile.getOriginalFilename();
-            }
-            // TODO 应该把Multi part File 传入Service层
-            ShopExecution se = shopService.modifyShop(shop, ImageHolder.builder().image(in).imageName(imgName).build());
-            if (se.getState() == ShopStateEnum.CHECK.getState()) {
-                return AjaxResult.success();
-            } else {
-                return AjaxResult.error(se.getStateInfo());
-            }
         }
-        return AjaxResult.error("empty shopId");
+        ShopExecution se = shopService.modifyShop(shop, ImageHolder.of(shopImgFile));
+        if (se.getState() == ShopStateEnum.CHECK.getState()) {
+            return AjaxResult.success();
+        } else {
+            return AjaxResult.error(se.getStateInfo());
+        }
     }
 
 //    private static void inputStreamToFile(InputStream ins, File shopImgFile) {

@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by miller on 2019/3/16
- *
+ *  商品分类管理
  * @author Miller
  */
 @Controller
@@ -25,6 +25,10 @@ public class ProductCategoryController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
+    /**
+     * 根据当前店铺查找当前店铺下所有商品分类
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public AjaxResult list() {
@@ -35,6 +39,11 @@ public class ProductCategoryController {
         return AjaxResult.success().put("list", productCategoryService.getList(currentShop.getId()));
     }
 
+    /**
+     * 批量添加商品分类
+     * @param productCategoryList
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/batchAdd", method = RequestMethod.POST)
     public AjaxResult batchAdd(@RequestBody List<ProductCategory> productCategoryList) {
@@ -42,7 +51,6 @@ public class ProductCategoryController {
         if (currentShop == null || currentShop.getId() <= 0) {
             return AjaxResult.error().state(ProductCategoryStateEnum.INNER_ERROR);
         }
-
         // 填充数据
         productCategoryList.stream().forEach((ProductCategory p) -> p.setShopId(currentShop.getId()));
         ProductCategoryExecution execution = productCategoryService.batchAdd(productCategoryList);
@@ -52,6 +60,11 @@ public class ProductCategoryController {
         return AjaxResult.error(execution.getStateInfo());
     }
 
+    /**
+     * 根据id删除商品分类
+     * @param id
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.GET)
     public AjaxResult delete(@PathVariable("id") Long id){
