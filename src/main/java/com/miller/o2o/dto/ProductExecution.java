@@ -2,8 +2,7 @@ package com.miller.o2o.dto;
 
 import com.miller.o2o.entity.Product;
 import com.miller.o2o.enums.ProductStateEnum;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +13,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class ProductExecution {
     /**
      * 结果状态

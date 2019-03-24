@@ -42,4 +42,10 @@ public class ShopViewController {
     }
 
 
+    @RequestMapping(path = "/product/list")
+    public String productList() {
+        return prefix + "/product/list";
+    }
+
+
 }

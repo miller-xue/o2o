@@ -14,6 +14,9 @@ import java.util.List;
  */
 public interface ProductService {
 
+
+    ProductExecution getList(Product condition, int pageNum, int pageSize);
+
     /**
      * 添加商品信息以及图片处理
      *
@@ -25,6 +28,11 @@ public interface ProductService {
      */
     ProductExecution add(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList);
 
+    /**
+     * 根据商品id查询商品
+     * @param id
+     * @return
+     */
     Product getById(long id);
 
     /**
@@ -37,5 +45,7 @@ public interface ProductService {
      * @throws ProductOperationException
      */
     ProductExecution modify(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList);
+
+    boolean setProductCategoryToNull(long productCategoryId);
 
 }

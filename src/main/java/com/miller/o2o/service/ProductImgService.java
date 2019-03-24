@@ -1,5 +1,6 @@
 package com.miller.o2o.service;
 
+import com.miller.o2o.entity.Product;
 import com.miller.o2o.entity.ProductImg;
 
 import java.util.List;
@@ -12,5 +13,5 @@ import java.util.List;
 public interface ProductImgService {
     boolean batchAdd(List<ProductImg> imgList);
 
-    boolean deleteByProductId(long productId);
+    boolean deleteByProductId(Product product);
 }

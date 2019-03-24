@@ -2,6 +2,8 @@ package com.miller.o2o.dao;
 
 import com.miller.o2o.entity.Product;
 
+import java.util.List;
+
 /**
  * Created by miller on 2019/3/18
  *
@@ -13,5 +15,9 @@ public interface ProductDao {
 
     int update(Product product);
 
-    int selectById(long id);
+    Product selectById(long id);
+
+    List<Product> selectList(Product condition);
+
+    int updateProductCategoryToNull(long productCategoryId);
 }

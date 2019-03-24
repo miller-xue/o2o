@@ -5,6 +5,7 @@ import com.miller.o2o.common.AjaxResult;
 import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ProductExecution;
 import com.miller.o2o.entity.Product;
+import com.miller.o2o.entity.ProductCategory;
 import com.miller.o2o.entity.Shop;
 import com.miller.o2o.enums.ProductStateEnum;
 import com.miller.o2o.enums.ShopStateEnum;
@@ -12,6 +13,7 @@ import com.miller.o2o.service.ProductCategoryService;
 import com.miller.o2o.service.ProductService;
 import com.miller.o2o.util.CodeUtil;
 import com.miller.o2o.util.HttpContextUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,23 @@ public class ProductController {
 
     @Autowired
     private ProductCategoryService productCategoryService;
+
+    @ResponseBody
+    @RequestMapping(value = "/getListByShop", method = RequestMethod.GET)
+    public AjaxResult getListByShop(@RequestParam(value = "pageNum",defaultValue = "1") int pageNum,
+                                    @RequestParam(value = "pageSize",defaultValue = "10") int pageSize,
+                                    Long productCategoryId,
+                                    String productName,
+                                    HttpServletRequest request) {
+        Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+        if (currentShop == null || currentShop.getId() == null) {
+            return AjaxResult.error("empty shop");
+        }
+        Product condition = Product.builder().shop(currentShop).name(productName)
+                .productCategory(ProductCategory.builder().id(productCategoryId).build()).build();
+        ProductExecution pe = productService.getList(condition, pageNum, pageSize);
+        return AjaxResult.success().put("count", pe.getCount()).put("productList", pe.getProductList());
+    }
 
 
     @ResponseBody
@@ -91,14 +110,26 @@ public class ProductController {
     @ResponseBody
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
     public AjaxResult modify(@RequestParam("productStr") String productJson, MultipartFile thumbnail,
-                             List<MultipartFile> productImg, HttpServletRequest request) throws IOException {
-        if (!CodeUtil.checkVerifyCode(request)) {
-            return AjaxResult.error("输入了错误的验证码");
+                             List<MultipartFile> productImg, HttpServletRequest request,
+                             Boolean statusChange) throws IOException {
+        if (statusChange != null && !statusChange) {
+            if (!CodeUtil.checkVerifyCode(request)) {
+                return AjaxResult.error("输入了错误的验证码");
+            }
         }
         // 获取product对象
         ObjectMapper mapper = new ObjectMapper();
         Product p = mapper.readValue(productJson, Product.class);
-        List<ImageHolder> collect = productImg.stream().map(ImageHolder::of).collect(Collectors.toList());
+        if (p == null || p.getId() == null) {
+            return AjaxResult.error("empty product");
+        }
+
+        Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+        p.setShop(currentShop);
+        List<ImageHolder> collect = null;
+        if (CollectionUtils.isNotEmpty(productImg)) {
+            collect = productImg.stream().map(ImageHolder::of).collect(Collectors.toList());
+        }
         ProductExecution se = productService.modify(p, ImageHolder.of(thumbnail), collect);
         if (se.getState() == ProductStateEnum.SUCCESS.getState()) {
             return AjaxResult.success();

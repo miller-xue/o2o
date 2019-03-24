@@ -1,5 +1,7 @@
 package com.miller.o2o.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.miller.o2o.dao.ProductDao;
 import com.miller.o2o.dto.ImageHolder;
 import com.miller.o2o.dto.ProductExecution;
@@ -36,6 +38,16 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    public ProductExecution getList(Product condition, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> productList = productDao.selectList(condition);
+        PageInfo<Product> pageInfo = PageInfo.of(productList);
+        return ProductExecution.builder().count(pageInfo.getTotal()).productList(pageInfo.getList())
+                .state(ProductStateEnum.SUCCESS.getState())
+                .build();
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public ProductExecution add(Product product, ImageHolder thumbnail, List<ImageHolder> productImgList) throws ProductOperationException {
         // 1.处理缩略图，获取缩略图相对路径并赋值给product
@@ -67,8 +79,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getById(long id) {
-        //TODO
-        return null;
+        return productDao.selectById(id);
     }
 
     @Override
@@ -83,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
         if (thumbnail != null) {
             try {
                 addThumbnail(product, thumbnail);
-                // TODO 删除之前缩略图
+                ImageUtil.deleteFileOrPath(before.getImgAddr());
             } catch (IOException e) {
                 throw new ProductOperationException("添加缩略图失败" + e.getMessage());
             }
@@ -95,15 +106,20 @@ public class ProductServiceImpl implements ProductService {
         }
         // 4.判断是否修改了商品详情图
         if (CollectionUtils.isNotEmpty(productImgList)) {
-            addProductImgList(product, productImgList);
+            boolean flag = productImgService.deleteByProductId(before);
             // 删除之前的商品详情图
-            boolean flag = productImgService.deleteByProductId(product.getId());
             if (!flag) {
                 // 删除之前商品详情成功
                 throw new ProductOperationException("修改商品详情图失败");
             }
+            addProductImgList(product, productImgList);
         }
         return new ProductExecution(ProductStateEnum.SUCCESS, product);
+    }
+
+    @Override
+    public boolean setProductCategoryToNull(long productCategoryId) {
+        return productDao.updateProductCategoryToNull(productCategoryId) > 0;
     }
 
 

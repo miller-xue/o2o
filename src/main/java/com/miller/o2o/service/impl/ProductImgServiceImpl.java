@@ -1,8 +1,10 @@
 package com.miller.o2o.service.impl;
 
 import com.miller.o2o.dao.ProductImgDao;
+import com.miller.o2o.entity.Product;
 import com.miller.o2o.entity.ProductImg;
 import com.miller.o2o.service.ProductImgService;
+import com.miller.o2o.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +29,10 @@ public class ProductImgServiceImpl implements ProductImgService {
     }
 
     @Override
-    public boolean deleteByProductId(long productId) {
-        // TODO 删除图片文件
+    public boolean deleteByProductId(Product product) {
+        product.getProductImgList().stream().forEach(p -> ImageUtil.deleteFileOrPath(p.getAddr()));
         // 删除数据库信息
-        return true;
+        return productImgDao.deleteByProductId(product.getId()) > 0;
     }
+
 }

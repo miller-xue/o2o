@@ -25,12 +25,11 @@ $(function () {
                 $("#priority").val(product.priority);
                 $("#normalPrice").val(product.normalPrice);
                 $("#promotionPrice").val(product.promotionPrice);
+                console.log(data.productCategoryList)
                 let tempHtml;
                 data.productCategoryList.map(function (item, index) {
-                    tempHtml += '<option data-id="' + item.id + '"' +
-                    product.productCategory.id == item.id ? 'selected' : ''
-                        + '>'
-                        + item.name + '</option>';
+                    let selected = product.productCategory.id == item.id ? 'selected' : '';
+                    tempHtml +=  '<option data-id="' + item.id + '"' + selected  + '>' + item.name + '</option>';
                 });
                 $("#productCategory").html(tempHtml);
             }else {

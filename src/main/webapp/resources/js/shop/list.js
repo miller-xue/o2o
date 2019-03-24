@@ -18,7 +18,7 @@ $(function () {
     }
 
     function handlerUser(user) {
-        $("#user-name").text(data.name);
+        $("#user-name").text(user.name);
     }
 
     function handlerList(shopList) {

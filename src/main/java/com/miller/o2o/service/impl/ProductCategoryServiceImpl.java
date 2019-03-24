@@ -6,6 +6,7 @@ import com.miller.o2o.entity.ProductCategory;
 import com.miller.o2o.enums.ProductCategoryStateEnum;
 import com.miller.o2o.exceptions.ProductCategoryOperationException;
 import com.miller.o2o.service.ProductCategoryService;
+import com.miller.o2o.service.ProductService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.util.List;
  */
 @Service
 public class ProductCategoryServiceImpl implements ProductCategoryService {
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private ProductCategoryDao productCategoryDao;
@@ -45,11 +49,15 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Override
     public ProductCategoryExecution delete(long id, long shopId) {
 
-        //TODO 将此类别下的商品里的类别id置为空，在删除该商品类别
-
+        //解除商品与商品分类关联
+        boolean b = productService.setProductCategoryToNull(id);
+        if (!b) {
+            throw new ProductCategoryOperationException("商品类别更新失败");
+        }
+        // 删除商品 分类
         int effectedNum = productCategoryDao.delete(id, shopId);
         if (effectedNum <= 0) {
-            throw new ProductCategoryOperationException("删除失败");
+            throw new ProductCategoryOperationException("商品类别删除失败");
         }
         return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
     }

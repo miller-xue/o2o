@@ -15,12 +15,78 @@
         <result column="create_time" property="createTime"/>
         <result column="last_edit_time" property="lastEditTime"/>
         <result column="enable_status" property="enableStatus"/>
-        <collection column="id" property="productImgList" resultMap="com.miller.o2o.dao.ProductImgDao.ProductImgMap">
+        <association property="shop" column="shopId"
+                javaType="com.miller.o2o.entity.Shop">
+            <id column="shop_id" property="id"/>
+        </association>
+        <association property="productCategory" column="product_category_id"
+                     javaType="com.miller.o2o.entity.ProductCategory">
+            <id column="product_category_id" property="id" />
+        </association>
+        <collection column="id" property="productImgList" ofType="com.miller.o2o.entity.ProductImg">
+            <id column="product_img_id" property="id"  />
+            <result column="product_img_addr" property="addr"/>
+            <result column="product_img_desc" property="desc"/>
+            <result column="product_img_priority" property="priority"/>
+            <result column="product_img_create_time" property="createTime"/>
         </collection>
     </resultMap>
 
     <select id="selectById" resultMap="productMap" parameterType="long">
+        select
+            p.id,
+            p.name,
+            p.desc,
+            p.img_addr,
+            p.normal_price,
+            p.promotion_price,
+            p.priority,
+            p.create_time,
+            p.last_edit_time,
+            p.enable_status,
+            p.product_category_id,
+            pi.id as product_img_id,
+            pi.addr as product_img_addr,
+            pi.desc as product_img_desc,
+            pi.priority as product_img_priority,
+            pi.create_time as product_img_create_time
+        from tb_product p
+        left join tb_product_img pi
+        on p.id = pi.product_id
+        where p.id = #{id}
+    </select>
 
+    <select id="selectList" resultMap="productMap" parameterType="com.miller.o2o.entity.Product">
+        select
+            `id`,
+            `name`,
+            `desc`,
+            `img_addr`,
+            `normal_price`,
+            `promotion_price`,
+            `priority`,
+            `create_time`,
+            `last_edit_time`,
+            `enable_status`,
+            `product_category_id`,
+            `shop_id`
+        from tb_product
+        <where>
+            <if test="shop != null and shop.id != null">
+                and shop_id = #{shop.id}
+            </if>
+            <if test="productCategory != null and productCategory.id != null">
+                and product_category_id = #{productCategory.id}
+            </if>
+            <if test="name != null and name.trim() != ''">
+                and name like '%${name}%'
+            </if>
+            <if test="enableStatus != null">
+                and enable_status = #{enable_status}
+            </if>
+        </where>
+        ORDER BY
+        priority DESC
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.miller.o2o.entity.Product">
@@ -33,6 +99,23 @@
     </insert>
 
     <update id="update" parameterType="com.miller.o2o.entity.Product">
-
+        update tb_product
+        <set>
+            <if test="name != null"> `name` = #{name},</if>
+            <if test="desc != null"> `desc` = #{desc},</if>
+            <if test="imgAddr != null"> `img_addr` = #{imgAddr},</if>
+            <if test="normalPrice != null"> `normal_price` = #{normalPrice},</if>
+            <if test="promotionPrice != null"> `promotion_price` = #{promotionPrice},</if>
+            <if test="priority != null"> `priority` = #{priority},</if>
+            <if test="enableStatus != null"> `enable_status` = #{enableStatus},</if>
+            <if test="productCategory != null and productCategory.id != null">`product_category_id` = #{productCategory.id},</if>
+        </set>
+        where id = #{id} and shop_id = #{shop.id}
+    </update>
+    
+    <update id="updateProductCategoryToNull" parameterType="long">
+        update tb_product
+        set product_category_id = null
+        where product_category_id = #{productCategoryId}
     </update>
 </mapper>
