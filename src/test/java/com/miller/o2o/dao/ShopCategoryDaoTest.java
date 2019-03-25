@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by miller on 2019/2/25
@@ -22,6 +23,8 @@ public class ShopCategoryDaoTest extends BaseTest {
     @Test
     public void queryList() {
         List<ShopCategory> shopCategories = dao.queryList(null);
-
+        assertEquals(1,shopCategories.size());
+        List<ShopCategory> shopCategories1 = dao.queryList(ShopCategory.builder().parent(ShopCategory.builder().id(1L).build()).build());
+        assertEquals(2, shopCategories1.size());
     }
 }

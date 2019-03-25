@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface ShopCategoryService {
 
-    List<ShopCategory> getList(ShopCategory shopCategoryCondition);
+    List<ShopCategory> getList(ShopCategory condition);
 }

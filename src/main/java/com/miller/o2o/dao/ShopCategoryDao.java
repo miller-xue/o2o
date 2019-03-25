@@ -12,5 +12,5 @@ import java.util.List;
  */
 public interface ShopCategoryDao {
 
-    List<ShopCategory> queryList(@Param("shopCategoryCondition") ShopCategory shopCategoryCondition);
+    List<ShopCategory> queryList(@Param("condition") ShopCategory condition);
 }
